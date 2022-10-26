@@ -14,7 +14,8 @@ japonicum
 You can install the development version of SJDB like so:
 
 ``` r
-install.packages('SJDB/',repos = NULL)
+install.packages("remotes")
+remotes::install_github('shycheng/SJDB')
 ```
 
 ## Example
@@ -23,9 +24,9 @@ This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(SJDB)
-# If you want to do GO and KEGG pathway analysis for Schistosoma joponicum,you must install org.Sjaponicum.eg.db firstly,like this:
+# If you want to do GO and KEGG pathway analysis for Schistosoma joponicum,you must download <SJDB_Data> and install org.Sjaponicum.eg.db firstly,like this:
 
-# install.packages(paste0(system.file("extdata",package = "SJDB"),"/org.Sjaponicum.eg.db"),repos = NULL)
+# install.packages("SJDB_Data/org.Sjaponicum.eg.db"),repos = NULL)
 
 library(org.Sjaponicum.eg.db)
 #> Loading required package: AnnotationDbi
@@ -162,3 +163,25 @@ list.files("~/Projects/RNASeq_YC_20220810/2.Results/test/",pattern = '*xlsx')
 #> [3] "GFP_VS_One2_GOterms_enrichment.xlsx" "GFP_VS_One2_GSEA_GOterm.xlsx"       
 #> [5] "GFP_VS_One2_GSEA_KEGGpathway.xlsx"   "RNASeq_NormExpression.xlsx"
 ```
+
+### Step7.Inference of differential exon usage in RNA-Seq data
+``` r
+# run_DEXseq and save resultes
+dxr <- run_DEXseq(group_a_name = 'AF',
+                  group_b_name ='GF',
+                  flattenedFile = list.files('/home/shycheng/genome/Schitosoma_jp/ref_sjv3/ref_sjv3_update', pattern="DEXSeq.chr.gff$", full.names=TRUE),
+                  DEXres_path = '~/Projects/RNASeq_YC_20201029/2.Results/DEXseq_outputs/',
+                  nCores = 32,file_Dir = './',p_cutoff = 0.05,FC_cutoff=1)
+                  
+```
+
+``` r
+id = 'Sjc_0001120'
+
+par(oma=c(3,3,3,3))
+DEXSeq::plotDEXSeq(dxr, id, displayTranscripts=F, legend=TRUE,FDR = 0.1,
+           cex.axis=1,cex=1.5, lwd=1.5,names = T)
+title(main = paste(id,id2name[id,'Note']),outer = T)
+
+```
+<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
