@@ -1,0 +1,153 @@
+---
+title: "tutorial"
+author: "CHENGSY"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+
+
+# SJDB
+
+<!-- badges: start -->
+
+<!-- badges: end -->
+
+SJDB is a R package of run RNA-seq DEGs analysis for Schistosoma japonicum
+
+## Installation
+
+You can install the development version of SJDB like so:
+
+``` r
+install.packages('SJDB/',repos = NULL)
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(SJDB)
+# If you want to do GO and KEGG pathway analysis for Schistosoma joponicum,you must install org.Sjaponicum.eg.db firstly,like this:
+
+# install.packages(paste0(system.file("extdata",package = "SJDB"),"/org.Sjaponicum.eg.db"),repos = NULL)
+
+library(org.Sjaponicum.eg.db)
+## basic example code
+
+```
+
+```{r load-packages, include=FALSE}
+
+library(writexl)
+library(DESeq2)
+library(clusterProfiler)
+library(ggplot2)
+library(FactoMineR)
+library(factoextra)
+library(patchwork)
+library(ggpubr)
+library(org.Sjaponicum.eg.db)
+library(EnhancedVolcano)
+```
+
+### Step1.run different expression analysis and get a dds object
+
+```{r echo=TRUE}
+
+dds <- run_DESeq2(count_data = '~/Projects/RNASeq_YC_20220810/2.Results/SnakePipe_outputs/featureCounts/counts.tsv',group_a_name = 'GFP',group_a_samples = c("GFP.F1", "GFP.F2", "GFP.F3", "GFP.F4"),group_b_name = 'One2',group_b_samples = c("One2.F1", "One2.F2", "One2.F3", "One2.F4"))
+
+# ,save_Plot = T,file_Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/',p_cutoff = 0.05,FC_cutoff = 1
+
+```
+
+### Step2.PCA and Sample Correlation Analysis(pearson)
+
+If you want to save plots,just set `save_Plot = T, file_Dir = 'your_path/'`
+
+```{r echo=TRUE}
+plot_PCA(dds,save_Plot = T,file_Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/')
+
+```
+
+```{r echo=TRUE}
+
+Plot_corr_heatmap(dds,savePlot = T,fileDir = '~/Projects/RNASeq_YC_20220810/2.Results/test/',type = 'pearson')
+
+
+```
+
+### Step3.Get the DEGs(different expression genes) you want
+
+```{r echo=TRUE}
+
+diffres <- get_mRNA_diff(dds,x= 'GFP',y = 'One2',p_cutoff = 0.05,FC_cutoff = 1)
+
+```
+
+### Step4.Heatmap and volcano plot
+
+```{r echo=TRUE,warning=FALSE}
+Plot_volcano(Diff_res = diffres,Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/',save_Plot = T )
+
+```
+
+optional
+
+```{r echo=TRUE,warning=FALSE,fig.height=8,fig.width=6}
+Plot_enhancedVolcano(Diff_res = diffres,n = 5,save_Plot = T,p_cutoff = 0.05,FC_cutoff = 1,Dir ='~/Projects/RNASeq_YC_20220810/2.Results/test/' )
+
+```
+
+```{r echo=TRUE,warning=FALSE,fig.width=3.5,fig.height=6}
+Plot_heatmap(Diff_res = diffres,dds = dds,Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/',
+             save_Plot = T,show_rownames = F)
+```
+
+```{r echo=TRUE,warning=FALSE}
+Barplot_ID(dds = dds,ID = 'Sjc_0003510')
+```
+
+### Step5.GO / KEGG pathway enrichment analysis ps: optional,not required
+
+```{r echo=TRUE}
+GOres <- getGO(diffres$down_gene$SYMBOL)
+clusterProfiler::cnetplot(GOres$GOList$MF) # BP,CC,MF
+```
+
+```{r echo=TRUE}
+KEGGres <- getKEGG(diffres$down_gene$SYMBOL)
+clusterProfiler::dotplot(KEGGres)
+```
+
+```{r echo=TRUE}
+Plot_DE_GOTerms(Diff_res = diffres,DIR = '~/Projects/RNASeq_YC_20220810/2.Results/test/',p_cutoff = 0.05)
+```
+
+### Step6.Write results to excel files
+
+```{r echo=TRUE}
+ExptoXlSX(dds = dds,Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/')
+DEtoXlSX(Diff_res = diffres,Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/')
+GOtoXlSX(Diff_res = diffres,Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/')
+# GSEA analysis need long time,don't run in the example 
+# GSEAtoXlSX(Diff_res = diffres,Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/',pvalueCutoff = 0.5)
+
+list.files("~/Projects/RNASeq_YC_20220810/2.Results/test/",pattern = '*xlsx')
+```
