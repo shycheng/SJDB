@@ -13,6 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
+
 # SJDB
 
 <!-- badges: start -->
@@ -60,7 +61,7 @@ library(EnhancedVolcano)
 
 ### Step1.run different expression analysis and get a dds object
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 
 dds <- run_DESeq2(count_data = '~/Projects/RNASeq_YC_20220810/2.Results/SnakePipe_outputs/featureCounts/counts.tsv',group_a_name = 'GFP',group_a_samples = c("GFP.F1", "GFP.F2", "GFP.F3", "GFP.F4"),group_b_name = 'One2',group_b_samples = c("One2.F1", "One2.F2", "One2.F3", "One2.F4"))
 
@@ -72,12 +73,12 @@ dds <- run_DESeq2(count_data = '~/Projects/RNASeq_YC_20220810/2.Results/SnakePip
 
 If you want to save plots,just set `save_Plot = T, file_Dir = 'your_path/'`
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 plot_PCA(dds,save_Plot = T,file_Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/')
 
 ```
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 
 Plot_corr_heatmap(dds,savePlot = T,fileDir = '~/Projects/RNASeq_YC_20220810/2.Results/test/',type = 'pearson')
 
@@ -86,7 +87,7 @@ Plot_corr_heatmap(dds,savePlot = T,fileDir = '~/Projects/RNASeq_YC_20220810/2.Re
 
 ### Step3.Get the DEGs(different expression genes) you want
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 
 diffres <- get_mRNA_diff(dds,x= 'GFP',y = 'One2',p_cutoff = 0.05,FC_cutoff = 1)
 
@@ -94,46 +95,46 @@ diffres <- get_mRNA_diff(dds,x= 'GFP',y = 'One2',p_cutoff = 0.05,FC_cutoff = 1)
 
 ### Step4.Heatmap and volcano plot
 
-```{r echo=FALSE,warning=FALSE}
+```{r echo=TRUE,warning=FALSE}
 Plot_volcano(Diff_res = diffres,Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/',save_Plot = T )
 
 ```
 
 optional
 
-```{r echo=FALSE,warning=FALSE,fig.height=8,fig.width=6}
+```{r echo=TRUE,warning=FALSE,fig.height=8,fig.width=6}
 Plot_enhancedVolcano(Diff_res = diffres,n = 5,save_Plot = T,p_cutoff = 0.05,FC_cutoff = 1,Dir ='~/Projects/RNASeq_YC_20220810/2.Results/test/' )
 
 ```
 
-```{r echo=FALSE,warning=FALSE,fig.width=3.5,fig.height=6}
+```{r echo=TRUE,warning=FALSE,fig.width=3.5,fig.height=6}
 Plot_heatmap(Diff_res = diffres,dds = dds,Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/',
              save_Plot = T,show_rownames = F)
 ```
 
-```{r echo=FALSE,warning=FALSE}
+```{r echo=TRUE,warning=FALSE}
 Barplot_ID(dds = dds,ID = 'Sjc_0003510')
 ```
 
 ### Step5.GO / KEGG pathway enrichment analysis ps: optional,not required
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 GOres <- getGO(diffres$down_gene$SYMBOL)
 clusterProfiler::cnetplot(GOres$GOList$MF) # BP,CC,MF
 ```
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 KEGGres <- getKEGG(diffres$down_gene$SYMBOL)
 clusterProfiler::dotplot(KEGGres)
 ```
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 Plot_DE_GOTerms(Diff_res = diffres,DIR = '~/Projects/RNASeq_YC_20220810/2.Results/test/',p_cutoff = 0.05)
 ```
 
 ### Step6.Write results to excel files
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 ExptoXlSX(dds = dds,Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/')
 DEtoXlSX(Diff_res = diffres,Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/')
 GOtoXlSX(Diff_res = diffres,Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/')
