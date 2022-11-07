@@ -11,5 +11,6 @@
 #' @importFrom data.table .NGRP
 #' @importFrom data.table .SD
 #' @importFrom data.table data.table
+#' @import ggplot2
 ## usethis namespace: end
 NULL

@@ -1,5 +1,3 @@
-.datatable.aware = TRUE
-
 #' Title Plot gene expression bubbleplot / heatmap
 #'
 #' @param inp
@@ -17,7 +15,6 @@
 #'
 #' @return
 #' @export
-#' @import data.table
 scBubbHeat <- function(shinycell_prefix,inp,inpH5, inpGrp, inpPlt = "Bubbleplot",
                        inpsub1=NULL,   inpScl=T, inpRow =T, inpCol=T,
                        inpcols = 'Blue-Yellow-Red',inpfsz = 'Small', save = FALSE){
@@ -28,7 +25,7 @@ scBubbHeat <- function(shinycell_prefix,inp,inpH5, inpGrp, inpPlt = "Bubbleplot"
   cList   <- shinycell_prefix@cList
   sList   <- shinycell_prefix@sList
 
-  if(is.null(inpsub1)){inpsub1 = inpConf$inpConf$UI[1]}
+  if(is.null(inpsub1)){inpsub1 = inpConf$UI[1]}
   # Identify genes that are in our dataset
   geneList = inp[inp %in% names(inpGene)]
 
@@ -37,7 +34,7 @@ scBubbHeat <- function(shinycell_prefix,inp,inpH5, inpGrp, inpPlt = "Bubbleplot"
   h5data <- h5file[["grp"]][["data"]]
   ggData = data.table::data.table()
   for(iGene in geneList){
-    tmp = inpMeta[, c("sampleID", inpConf[UI == inpsub1]$ID)]
+    tmp = inpMeta[, c("sampleID", inpConf[UI == inpsub1]$ID), with = FALSE]
     colnames(tmp) = c("sampleID", "sub")
     tmp$grpBy = inpMeta[[inpConf[UI == inpGrp]$ID]]
     tmp$geneName = iGene
@@ -84,7 +81,7 @@ scBubbHeat <- function(shinycell_prefix,inp,inpH5, inpGrp, inpPlt = "Bubbleplot"
     ggData$geneName = factor(ggData$geneName, levels = rev(geneList$gene))
   }
   if(inpCol){
-    hcCol = dendro_data(as.dendrogram(hclust(dist(t(ggMat)))))
+    hcCol = ggdendro::dendro_data(as.dendrogram(hclust(dist(t(ggMat)))))
     ggCol = ggplot() +
       geom_segment(data = hcCol$segments, aes(x=x,y=y,xend=xend,yend=yend)) +
       scale_x_continuous(breaks = seq_along(hcCol$labels$label),
@@ -174,10 +171,10 @@ scBubbHeat <- function(shinycell_prefix,inp,inpH5, inpGrp, inpPlt = "Bubbleplot"
 #'
 #' @examples
 ShinyCell_prefix <- setClass(Class = "ShinyCell_prefix",slots = list(
-  conf = "data.frame",
+  conf = "data.table",
   def = "list",
   gene = 'integer',
-  meta = 'data.frame',
+  meta = 'data.table',
   cList = 'list',
   sList = 'numeric'
 ))

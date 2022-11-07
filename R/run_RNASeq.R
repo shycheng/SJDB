@@ -76,7 +76,7 @@ run_DESeq2 <- function(count_data,
 #'
 #' @examples
 get_mRNA_diff <- function(dds=dds,group="Condition",x,y,p_cutoff=0.05,FC_cutoff=1){
-  res <- results(dds, contrast = c(group, x,y))
+  res <- DESeq2::results(dds, contrast = c(group, x,y))
   SYMBOL <- rownames(res)
   Res <- cbind(SYMBOL,res)
   rankRes <- as.data.frame(res)
