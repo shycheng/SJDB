@@ -1,8 +1,8 @@
 Package: SJDB
 Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
+    person("ShaoYun", "Cheng", , "shawyunchan@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
@@ -10,11 +10,32 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Depends: 
-    R (>= 2.10)
+    R (>= 4.0.0)
 LazyData: true
+biocViews:
 Imports: 
+    AnnotationDbi,
+    BiocGenerics,
+    clusterProfiler,
     data.table,
+    DESeq2,
     DEXSeq,
+    dplyr,
+    EnhancedVolcano,
+    enrichplot,
+    factoextra,
+    FactoMineR,
     ggdendro,
+    ggplot2,
+    ggpubr,
+    grDevices,
+    gridExtra,
     hdf5r,
-    magrittr
+    magrittr,
+    patchwork,
+    pheatmap,
+    plyr,
+    stats,
+    SummarizedExperiment,
+    utils,
+    writexl
