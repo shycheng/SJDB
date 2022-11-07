@@ -13,5 +13,8 @@ Depends:
     R (>= 2.10)
 LazyData: true
 Imports: 
+    data.table,
     DEXSeq,
+    ggdendro,
+    hdf5r,
     magrittr

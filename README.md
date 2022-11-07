@@ -5,8 +5,7 @@
 
 <!-- badges: start -->
 <!-- badges: end -->
-
-SJDB is a R package of run RNA-seq DEGs analysis for Schistosoma
+SJDB is a R package used to perform  RNA-seq DEGs analysis in Schistosoma
 japonicum
 
 ## Installation
@@ -169,9 +168,9 @@ list.files("~/Projects/RNASeq_YC_20220810/2.Results/test/",pattern = '*xlsx')
 # run_DEXseq and save resultes
 dxr <- run_DEXseq(group_a_name = 'AF',
                   group_b_name ='GF',
-                  flattenedFile = list.files('/home/shycheng/genome/Schitosoma_jp/ref_sjv3/ref_sjv3_update', pattern="DEXSeq.chr.gff$", full.names=TRUE),
-                  DEXres_path = '~/Projects/RNASeq_YC_20201029/2.Results/DEXseq_outputs/',
-                  nCores = 32,file_Dir = './',p_cutoff = 0.05,FC_cutoff=1)
+                  flattenedFile = list.files("/SJDB/DEXSeq.chr.gff$", full.names=TRUE), 
+                  DEXres_path = '~/2.Results/DEXseq_outputs/',
+                  nCores = 4,file_Dir = './',p_cutoff = 0.05,FC_cutoff=1)
                   
 ```
 
@@ -185,3 +184,25 @@ title(main = paste(id,id2name[id,'Note']),outer = T)
 
 ```
 <img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
+
+
+### Step8.Identification of cell type specific DE genes
+``` r
+# loading single cell RNA-seq dataset and prefix,eg:
+load('~/Projects/Rscripts_set/SingleCell_dataset/SingleCell_prefix.rda')
+
+# input DEGs you want to plot, "diffres"  DEGs res from get_mRNA_diff() function,eg: up-regualted genes
+input_IDs = gsub('_','-',diffres$up_gene$SYMBOL)
+
+# Male-- 
+scBubbHeat(shinycell_prefix = ShinyCell_prefix_male,inp = input_IDs ,
+           inpH5 = '~/Projects/Rscripts_set/SingleCell_dataset/Male.h5', "Cell Type")
+
+# Female-- 
+# scBubbHeat(shinycell_prefix = ShinyCell_prefix_female,inp = input_IDs ,
+           inpH5 = '~/Projects/Rscripts_set/SingleCell_dataset/Female.h5', "Cell Type")
+
+```
+
+<img src="man/figures/README-Single-cell_male-upGenes.png" width="100%" />
+
