@@ -84,13 +84,13 @@ If you want to save plots,just set
 plot_PCA(dds,save_Plot = T,file_Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/')
 ```
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="60%" />
 
 ``` r
 Plot_corr_heatmap(dds,savePlot = T,fileDir = '~/Projects/RNASeq_YC_20220810/2.Results/test/',type = 'pearson')
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="60%" />
 
 ### Step3.Get the DEGs(different expression genes) you want
 
@@ -104,7 +104,7 @@ diffres <- get_mRNA_diff(dds,x= 'GFP',y = 'One2',p_cutoff = 0.05,FC_cutoff = 1)
 Plot_volcano(Diff_res = diffres,Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/',save_Plot = T )
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="60%" />
 
 optional
 
@@ -112,7 +112,7 @@ optional
 Plot_enhancedVolcano(Diff_res = diffres,n = 5,save_Plot = T,p_cutoff = 0.05,FC_cutoff = 1,Dir ='~/Projects/RNASeq_YC_20220810/2.Results/test/' )
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="40%" />
 
 ``` r
 Plot_heatmap(Diff_res = diffres,dds = dds,Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/',
@@ -120,13 +120,13 @@ Plot_heatmap(Diff_res = diffres,dds = dds,Dir = '~/Projects/RNASeq_YC_20220810/2
 #> [1] "DE Genes Heatmap Plot Finish"
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="40%" />
 
 ``` r
 Barplot_ID(dds = dds,ID = 'Sjc_0003510')
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="60%" />
 
 ### Step5.GO / KEGG pathway enrichment analysis ps: optional,not required
 
@@ -135,14 +135,14 @@ GOres <- getGO(diffres$down_gene$SYMBOL)
 clusterProfiler::cnetplot(GOres$GOList$MF) # BP,CC,MF
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="60%" />
 
 ``` r
 KEGGres <- getKEGG(diffres$down_gene$SYMBOL)
 clusterProfiler::dotplot(KEGGres)
 ```
 
-<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-11-1.png" width="60%" />
 
 ``` r
 Plot_DE_GOTerms(Diff_res = diffres,DIR = '~/Projects/RNASeq_YC_20220810/2.Results/test/',p_cutoff = 0.05)
@@ -183,7 +183,7 @@ DEXSeq::plotDEXSeq(dxr, id, displayTranscripts=F, legend=TRUE,FDR = 0.1,
 title(main = paste(id,id2name[id,'Note']),outer = T)
 
 ```
-<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-13-1.png" width="60%" />
 
 
 ### Step8.Identification of cell type specific DE genes
@@ -204,5 +204,5 @@ scBubbHeat(shinycell_prefix = ShinyCell_prefix_male,inp = input_IDs ,
 
 ```
 
-<img src="man/figures/README-Single-cell_male-upGenes.png" width="100%" />
+<img src="man/figures/README-Single-cell_male-upGenes.png" width="40%" />
 
