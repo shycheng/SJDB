@@ -4,9 +4,9 @@
 \name{ShinyCell_prefix-class}
 \alias{ShinyCell_prefix-class}
 \alias{ShinyCell_prefix}
-\title{Title a S4 object of shinycell_prefix}
+\title{Title a shinycell prefix S4 class generic}
 \description{
-Title a S4 object of shinycell_prefix
+Title a shinycell prefix S4 class generic
 }
 \section{Slots}{
 
@@ -22,7 +22,5 @@ Title a S4 object of shinycell_prefix
 \item{\code{cList}}{list.}
 
 \item{\code{sList}}{numeric.}
-
-\item{\code{hdf5}}{character.}
 }}
 

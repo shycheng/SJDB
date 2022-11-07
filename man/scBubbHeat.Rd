@@ -20,7 +20,7 @@ scBubbHeat(
 )
 }
 \arguments{
-\item{shinycell_prefix}{}
+\item{save}{}
 }
 \description{
 Title Plot gene expression bubbleplot / heatmap

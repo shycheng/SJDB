@@ -1,3 +1,5 @@
+.datatable.aware = TRUE
+
 #' Title Plot gene expression bubbleplot / heatmap
 #'
 #' @param inp
@@ -10,24 +12,23 @@
 #' @param inpCol
 #' @param inpcols
 #' @param inpfsz
+#' @param shinycell_prefix
 #' @param save
- #' @param shinycell_prefix
 #'
 #' @return
 #' @export
-#'
-#' @examples
+#' @import data.table
 scBubbHeat <- function(shinycell_prefix,inp,inpH5, inpGrp, inpPlt = "Bubbleplot",
                        inpsub1=NULL,   inpScl=T, inpRow =T, inpCol=T,
                        inpcols = 'Blue-Yellow-Red',inpfsz = 'Small', save = FALSE){
   inpConf <- shinycell_prefix@conf
   inpMeta <- shinycell_prefix@meta
-  # inpH5   <- shinycell_prefix@hdf5
+  # inpH5   <- shinycell_pref@x@hdf5
   inpGene <- shinycell_prefix@gene
   cList   <- shinycell_prefix@cList
   sList   <- shinycell_prefix@sList
 
-  if(is.null(inpsub1)){inpsub1 = inpConf$UI[1]}
+  if(is.null(inpsub1)){inpsub1 = inpConf$inpConf$UI[1]}
   # Identify genes that are in our dataset
   geneList = inp[inp %in% names(inpGene)]
 
@@ -36,7 +37,7 @@ scBubbHeat <- function(shinycell_prefix,inp,inpH5, inpGrp, inpPlt = "Bubbleplot"
   h5data <- h5file[["grp"]][["data"]]
   ggData = data.table::data.table()
   for(iGene in geneList){
-    tmp = inpMeta[, c("sampleID", inpConf[UI == inpsub1]$ID), with = FALSE]
+    tmp = inpMeta[, c("sampleID", inpConf[UI == inpsub1]$ID)]
     colnames(tmp) = c("sampleID", "sub")
     tmp$grpBy = inpMeta[[inpConf[UI == inpGrp]$ID]]
     tmp$geneName = iGene
@@ -157,7 +158,9 @@ scBubbHeat <- function(shinycell_prefix,inp,inpH5, inpGrp, inpPlt = "Bubbleplot"
   return(ggOut)
 }
 
-#' Title a S4 object of shinycell_prefix
+
+
+#' Title a shinycell prefix S4 class generic
 #'
 #' @slot conf data.table.
 #' @slot def list.
@@ -165,20 +168,18 @@ scBubbHeat <- function(shinycell_prefix,inp,inpH5, inpGrp, inpPlt = "Bubbleplot"
 #' @slot meta data.table.
 #' @slot cList list.
 #' @slot sList numeric.
-#' @slot hdf5 character.
 #'
 #' @return
 #' @export
 #'
 #' @examples
 ShinyCell_prefix <- setClass(Class = "ShinyCell_prefix",slots = list(
-  conf = "data.table",
+  conf = "data.frame",
   def = "list",
   gene = 'integer',
-  meta = 'data.table',
+  meta = 'data.frame',
   cList = 'list',
-  sList = 'numeric',
-  hdf5 = 'character'
+  sList = 'numeric'
 ))
 
 
@@ -228,7 +229,6 @@ g_legend <- function(a.gplot){
   legend <- tmp$grobs[[leg]]
   legend
 }
-
 
 
 
