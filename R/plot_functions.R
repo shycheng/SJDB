@@ -82,10 +82,10 @@ getDEtab<- function(Diff_res){
   DEdf$Group[which((DEdf$padj <0.05) & (DEdf$log2FoldChange >= log2(5)))] = "Up-regulated (FC:>5)"
   down_genes <- subset(DEdf,DEdf$Group=="Down-regulated (FC:< -5)"|DEdf$Group=="Down-regulated (FC:-2~-5)") %>%
     as.data.frame() %>%
-    arrange(padj)
+    dplyr::arrange(padj)
   up_genes <- subset(DEdf,DEdf$Group=="Up-regulated (FC:>5)" | DEdf$Group=="Up-regulated (FC:2-5)")%>%
     as.data.frame() %>%
-    arrange(padj)
+    dplyr::arrange(padj)
   top10_label <- c(as.character(head(up_genes$Symbol,5)),as.character(head(down_genes$Symbol,5)))
   DEdf$Label <- ""
   DEdf$Label[match(top10_label,DEdf$Symbol)] <- top10_label

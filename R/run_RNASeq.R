@@ -7,7 +7,19 @@
 #' @param group_b_samples a list of samples in group B you choose, must in the colname of count_data
 #' @param group_b_name group b name eg:dsNFY
 #' @param batch if have batch effect, eg c(1,1,1,2,2,1),1~ batch1,2~ batch2
-#' @param pheno_file if group > 2, please provide pheno info in a csv file format.
+#' @param pheno_file if group > 8, please provide pheno info in a csv file format.
+#' @param group_c_name group names
+#' @param group_c_samples a list of samples in group , must in the colname of count_data
+#' @param group_d_name group names
+#' @param group_d_samples a list of samples in group , must in the colname of count_data
+#' @param group_e_name group names
+#' @param group_e_samples a list of samples in group , must in the colname of count_data
+#' @param group_f_name group names
+#' @param group_f_samples a list of samples in group , must in the colname of count_data
+#' @param group_g_name group names
+#' @param group_g_samples a list of samples in group , must in the colname of count_data
+#' @param group_h_name group names
+#' @param group_h_samples a list of samples in group , must in the colname of count_data
 #'
 #' @return a dds class for downstream analysis
 #' @export
@@ -22,6 +34,12 @@
 run_DESeq2 <- function(count_data,
                        group_a_name, group_a_samples,
                        group_b_name, group_b_samples,
+                       group_c_name=NULL, group_c_samples=NULL,
+                       group_d_name=NULL, group_d_samples=NULL,
+                       group_e_name=NULL, group_e_samples=NULL,
+                       group_f_name=NULL, group_f_samples=NULL,
+                       group_g_name=NULL, group_g_samples=NULL,
+                       group_h_name=NULL, group_h_samples=NULL,
                        pheno_file = '',
                        batch = NULL){
   data <- utils::read.table(count_data,header = T)
