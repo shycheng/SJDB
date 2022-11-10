@@ -44,10 +44,25 @@ run_DESeq2 <- function(count_data,
                        batch = NULL){
   data <- utils::read.table(count_data,header = T)
   #create a list of all samples for this current comparison
-  samples_for_comparison = c(group_a_samples, group_b_samples)
+  samples_for_comparison = c(group_a_samples,
+                             group_b_samples,
+                             group_c_samples,
+                             group_d_samples,
+                             group_e_samples,
+                             group_f_samples,
+                             group_g_samples,
+                             group_h_samples)
 
   #define the class factor for this pair of sample sets
-  class = factor(c(rep(group_a_name,length(group_a_samples)), rep(group_b_name,length(group_b_samples))))
+  class = factor(c(rep(group_a_name,length(group_a_samples)),
+                   rep(group_b_name,length(group_b_samples)),
+                   rep(group_c_name,length(group_c_samples)),
+                   rep(group_d_name,length(group_d_samples)),
+                   rep(group_e_name,length(group_e_samples)),
+                   rep(group_f_name,length(group_f_samples)),
+                   rep(group_g_name,length(group_g_samples)),
+                   rep(group_h_name,length(group_h_samples))
+                   ))
 
   #create a simplified data matrix for only these samples
   rawdata = data[,samples_for_comparison]

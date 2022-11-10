@@ -55,7 +55,6 @@ library(FactoMineR)
 library(factoextra)
 library(patchwork)
 library(ggpubr)
-library(org.Sjaponicum.eg.db)
 library(EnhancedVolcano)
 ```
 
@@ -63,7 +62,9 @@ library(EnhancedVolcano)
 
 ```{r echo=TRUE}
 
-dds <- run_DESeq2(count_data = '~/Projects/RNASeq_YC_20220810/2.Results/SnakePipe_outputs/featureCounts/counts.tsv',group_a_name = 'GFP',group_a_samples = c("GFP.F1", "GFP.F2", "GFP.F3", "GFP.F4"),group_b_name = 'One2',group_b_samples = c("One2.F1", "One2.F2", "One2.F3", "One2.F4"))
+dds <- run_DESeq2(count_data = '~/Projects/RNASeq_YC_20220810/2.Results/SnakePipe_outputs/featureCounts/counts.tsv',group_a_name = 'GFP_F',group_a_samples = c("GFP.F1", "GFP.F2", "GFP.F3", "GFP.F4"),group_b_name = 'One2_F',group_b_samples = c("One2.F1", "One2.F2", "One2.F3", "One2.F4"),
+group_c_name = 'GFP_M',group_c_samples = c("GFP.M1", "GFP.M2", "GFP.M3", "GFP.M4"),
+group_d_name = 'One2_M',group_d_samples = c("One2.M1", "One2.M2", "One2.M3", "One2.M4"))
 
 # ,save_Plot = T,file_Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/',p_cutoff = 0.05,FC_cutoff = 1
 

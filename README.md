@@ -15,6 +15,10 @@ You can install the development version of SJDB like so:
 ``` r
 install.packages("remotes")
 remotes::install_github('shycheng/SJDB')
+### If the network is wrong, try the following methods
+## install.packages("devtools")
+## devtools::install_github('shycheng/SJDB')
+
 ```
 
 ## Example

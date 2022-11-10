@@ -10,6 +10,18 @@ run_DESeq2(
   group_a_samples,
   group_b_name,
   group_b_samples,
+  group_c_name = NULL,
+  group_c_samples = NULL,
+  group_d_name = NULL,
+  group_d_samples = NULL,
+  group_e_name = NULL,
+  group_e_samples = NULL,
+  group_f_name = NULL,
+  group_f_samples = NULL,
+  group_g_name = NULL,
+  group_g_samples = NULL,
+  group_h_name = NULL,
+  group_h_samples = NULL,
   pheno_file = "",
   batch = NULL
 )
@@ -26,7 +38,31 @@ eg: "2.Results/SnakePipe_outputs_test/featureCounts/counts.tsv"}
 
 \item{group_b_samples}{a list of samples in group B you choose, must in the colname of count_data}
 
-\item{pheno_file}{if group > 2, please provide pheno info in a csv file format.}
+\item{group_c_name}{group names}
+
+\item{group_c_samples}{a list of samples in group , must in the colname of count_data}
+
+\item{group_d_name}{group names}
+
+\item{group_d_samples}{a list of samples in group , must in the colname of count_data}
+
+\item{group_e_name}{group names}
+
+\item{group_e_samples}{a list of samples in group , must in the colname of count_data}
+
+\item{group_f_name}{group names}
+
+\item{group_f_samples}{a list of samples in group , must in the colname of count_data}
+
+\item{group_g_name}{group names}
+
+\item{group_g_samples}{a list of samples in group , must in the colname of count_data}
+
+\item{group_h_name}{group names}
+
+\item{group_h_samples}{a list of samples in group , must in the colname of count_data}
+
+\item{pheno_file}{if group > 8, please provide pheno info in a csv file format.}
 
 \item{batch}{if have batch effect, eg c(1,1,1,2,2,1),1~ batch1,2~ batch2}
 }
