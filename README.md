@@ -25,9 +25,22 @@ This is a basic example which shows you how to solve a common problem:
 library(SJDB)
 # If you want to do GO and KEGG pathway analysis for Schistosoma joponicum,you must download <SJDB_Data> and install org.Sjaponicum.eg.db firstly,like this:
 
-# install.packages("SJDB_Data/org.Sjaponicum.eg.db"),repos = NULL)
+# install.packages("SJDB_Data/org.Sjaponicum.eg.db",repos = NULL)
 
+# library all packages requried for analysi
 library(org.Sjaponicum.eg.db)
+library(writexl)
+library(DESeq2)
+library(clusterProfiler)
+library(ggplot2)
+library(FactoMineR)
+library(factoextra)
+library(patchwork)
+library(ggpubr)
+library(org.Sjaponicum.eg.db)
+library(EnhancedVolcano)
+
+
 #> Loading required package: AnnotationDbi
 #> Loading required package: stats4
 #> Loading required package: BiocGenerics
