@@ -52,7 +52,7 @@ plot_PCA <- function(dds,save_Plot = FALSE,file_Dir = './',file_Name = 'All_Samp
 #'
 #' @examples
 Plot_corr_heatmap <- function(dds,fileDir,type='pearson',savePlot=FALSE){
-  rld <- rlog(dds, blind = FALSE)
+  rld <- DESeq2::rlog(dds, blind = FALSE)
   cor_matrix <- stats::cor(SummarizedExperiment::assay(rld),method = type)
   cor_heatmap <- pheatmap::pheatmap(cor_matrix,show_rownames = T,show_colnames = T,
                           main = "Sample correlation coefficient",
