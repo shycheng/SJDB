@@ -74,8 +74,15 @@ library(org.Sjaponicum.eg.db)
 count_data <- read.table('~/Projects/RNASeq_YC_20220810/2.Results/SnakePipe_outputs/featureCounts/counts.tsv',header = T)
 head(count_data)
 
+# run all analysis once!
+run_RNASeq(count_data = '~/Projects/RNASeq_YC_20220810/2.Results/SnakePipe_outputs/featureCounts/counts.tsv',groupList = c('GFP.F','One2.F'))
+
 # If you want to analyze multiple groups at once，Just add the group name and sample name repeatedly，like group_c_name ="xxx", group_c_samples="xxx",
 dds <- run_DESeq2(count_data = '~/Projects/RNASeq_YC_20220810/2.Results/SnakePipe_outputs/featureCounts/counts.tsv',group_a_name = 'GFP',group_a_samples = c("GFP.F1", "GFP.F2", "GFP.F3", "GFP.F4"),group_b_name = 'One2',group_b_samples = c("One2.F1", "One2.F2", "One2.F3", "One2.F4"))
+
+# Also, a simple way of input is acceptable!
+dds <- run_DESeq2(count_data = '~/Projects/RNASeq_YC_20220810/2.Results/SnakePipe_outputs/featureCounts/counts.tsv',groupList = c('GFP.F','One2.F'))
+
 #> estimating size factors
 #> estimating dispersions
 #> gene-wise dispersion estimates

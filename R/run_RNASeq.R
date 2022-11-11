@@ -31,9 +31,9 @@
 #'   group_b_name = 'WSS',
 #'   group_b_samples = c("W.F1","W.F2","W.M1")
 #' )
-run_DESeq2 <- function(count_data,
-                       group_a_name, group_a_samples,
-                       group_b_name, group_b_samples,
+run_DESeq2 <- function(count_data,groupList=c('GFP','dsRNA'),
+                       group_a_name=NULL, group_a_samples=NULL,
+                       group_b_name=NULL, group_b_samples=NULL,
                        group_c_name=NULL, group_c_samples=NULL,
                        group_d_name=NULL, group_d_samples=NULL,
                        group_e_name=NULL, group_e_samples=NULL,
@@ -52,9 +52,8 @@ run_DESeq2 <- function(count_data,
                              group_f_samples,
                              group_g_samples,
                              group_h_samples)
-
   #define the class factor for this pair of sample sets
-  class = factor(c(rep(group_a_name,length(group_a_samples)),
+  group = factor(c(rep(group_a_name,length(group_a_samples)),
                    rep(group_b_name,length(group_b_samples)),
                    rep(group_c_name,length(group_c_samples)),
                    rep(group_d_name,length(group_d_samples)),
@@ -62,8 +61,15 @@ run_DESeq2 <- function(count_data,
                    rep(group_f_name,length(group_f_samples)),
                    rep(group_g_name,length(group_g_samples)),
                    rep(group_h_name,length(group_h_samples))
-                   ))
+  ))
 
+  if (is.null(samples_for_comparison)) {
+    for (groupName in groupList) {
+      samples_for_comparison = base::append(samples_for_comparison,colnames(data)[stringr::str_which(colnames(data), groupName)])
+      group = base::append(group,rep(groupName,length(stringr::str_which(colnames(data), groupName))))
+      }
+    group = as.factor(group)
+  }
   #create a simplified data matrix for only these samples
   rawdata = data[,samples_for_comparison]
 
@@ -75,7 +81,7 @@ run_DESeq2 <- function(count_data,
     pheno$Condition <- as.factor(pheno$Condition)
     rawdata = data[,pheno$Sample]
   }else{
-    pheno <- data.frame(Sample=colnames(rawdata),Condition= class)
+    pheno <- data.frame(Sample=colnames(rawdata),Condition= group)
     rownames(pheno) <- pheno$Sample
   }
 
@@ -153,62 +159,51 @@ get_mRNA_diff <- function(dds=dds,group="Condition",x,y,p_cutoff=0.05,FC_cutoff=
 #' @export
 #'
 #' @examples
-run_RNASeq <- function(count_data,
-                       group_a_name, group_a_samples,
-                       group_b_name, group_b_samples,
+run_RNASeq <- function(count_data,groupList=c('GFP','dsRNA'),
+                       group_a_name=NULL, group_a_samples=NULL,
+                       group_b_name=NULL, group_b_samples=NULL,
+                       group_c_name=NULL, group_c_samples=NULL,
+                       group_d_name=NULL, group_d_samples=NULL,
+                       group_e_name=NULL, group_e_samples=NULL,
+                       group_f_name=NULL, group_f_samples=NULL,
+                       group_g_name=NULL, group_g_samples=NULL,
+                       group_h_name=NULL, group_h_samples=NULL,
                        pheno_file = '',
                        batch = NULL,
                        p_cutoff=0.05,
                        FC_cutoff=1,
-                       save_Plot,
-                       file_Dir
+                       save_Plot=TRUE,
+                       file_Dir = './'
                        ){
-  dds <- run_DESeq2(count_data,
+  dds <- run_DESeq2(count_data,groupList,
                     group_a_name, group_a_samples,
                     group_b_name, group_b_samples,
-                    pheno_file = '',
-                    batch = NULL)
+                    group_c_name, group_c_samples,
+                    group_d_name, group_d_samples,
+                    group_e_name, group_e_samples,
+                    group_f_name, group_f_samples,
+                    group_g_name, group_g_samples,
+                    group_h_name, group_h_samples,
+                    pheno_file,
+                    batch)
   # plot PCA for samples
   plot_PCA(dds,save_Plot,file_Dir)
-  # get the different expression analysis results form dds object
-  diff_res <- get_mRNA_diff(dds,group="Condition",group_a_name,group_b_name,p_cutoff,FC_cutoff)
-  # save results to files
+  contrast = utils::combn(groupList,2)
+  for (i in ncol(contrast)) {
+    # get the different expression analysis results form dds object
+    diff_res <- get_mRNA_diff(dds,group="Condition",x = contrast[1,i],y = contrast[2,i],p_cutoff,FC_cutoff)
+    # save results to files
 
-  DEtoXlSX(diff_res,file_Dir)
-  GOtoXlSX(diff_res,file_Dir)
-  GSEAtoXlSX(diff_res,file_Dir,pvalueCutoff = 0.5)
-  # save all plots
-  Plot_volcano(diff_res,file_Dir,save_Plot)
-  Plot_heatmap(diff_res,file_Dir,dds = dds)
-  PlotKEGG(diff_res,file_Dir)
-  Plot_DE_GOTerms(diff_res,file_Dir,p_cutoff = 0.05)
+    DEtoXlSX(diff_res,file_Dir)
+    GOtoXlSX(diff_res,file_Dir)
+    GSEAtoXlSX(diff_res,file_Dir,pvalueCutoff = 0.5)
+    # save all plots
+    Plot_volcano(diff_res,file_Dir,save_Plot)
+    Plot_heatmap(diff_res,file_Dir,dds = dds)
+    PlotKEGG(diff_res,file_Dir)
+    Plot_DE_GOTerms(diff_res,file_Dir,p_cutoff = 0.05)
+  }
+
 }
 
 
-
-
-
-
-
-# dds <- run_DESeq2(
-#     count_data = "~/Projects/RNASeq_CGW_20221014/2.Results/SnakePipe_outputs/featureCounts/counts.tsv",
-#     group_a_name = 'GFP',
-#     group_a_samples  = c("G.F1","G.F3","G.M"),
-#     group_b_name = 'WSS',
-#     group_b_samples = c("W.F1","W.F2","W.M1")
-#   )
-#
-# plot_PCA(dds,save_Plot = F,file_Dir = "~/Projects/RNASeq_CGW_20221014/2.Results/R_outputs/Plots/")
-# #
-# diff_res <- get_mRNA_diff(dds,group="Condition",x ='GFP',y = 'WSS',p_cutoff =0.05,FC_cutoff=1)
-# #
-# DEtoXlSX(diff_res,Dir = "~/Projects/RNASeq_CGW_20221014/2.Results/R_outputs/Plots/")
-#
-# Plot_corr_heatmap(dds,savePlot = T,fileDir  = "~/Projects/RNASeq_CGW_20221014/2.Results/R_outputs/Plots/")
-#
-# Plot_volcano(diff_res,
-#              Dir  = "~/Projects/RNASeq_CGW_20221014/2.Results/R_outputs/Plots/")
-# Plot_enhancedVolcano(diff_res,n = 5,Dir  = "~/Projects/RNASeq_CGW_20221014/2.Results/R_outputs/Plots/"
-#                      ,save_Plot = T)
-# Plot_heatmap(diff_res,Dir  = "~/Projects/RNASeq_CGW_20221014/2.Results/R_outputs/Plots/",dds = dds)
-#
