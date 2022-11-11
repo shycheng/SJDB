@@ -349,19 +349,7 @@ Plot_enhancedVolcano <- function(Diff_res,n=5,Dir,save_Plot=FALSE
                   y = 'padj',
                   title = prefix,
                   pCutoff = p_cutoff,
-                  FCcutoff = FC_cutoff,
-                  pointSize = 4.0,
-                  labSize = 5.0,
-                  labCol = 'black',
-                  labFace = 'bold',
-                  boxedLabels = TRUE,
-                  colAlpha = 4/5,
-                  legendPosition = 'top',
-                  legendLabSize = 14,
-                  legendIconSize = 4.0,
-                  drawConnectors = TRUE,
-                  widthConnectors = 0.5,max.overlaps = 10000,
-                  colConnectors = 'black')
+                  FCcutoff = FC_cutoff)
   if(save_Plot==TRUE){
     ggplot2::ggsave(filename = filename,plot = en_Volcano_Plot,width = 12,height = 10)
   }
