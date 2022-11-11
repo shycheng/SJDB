@@ -1,45 +1,59 @@
 #' Title plot PCA
 #'
-#' @param dds dds object ,eg :
-#' dds <- run_DESeq2(
-#'count_data = "~/Projects/RNASeq_CGW_20221014/2.Results/SnakePipe_outputs/featureCounts/counts.tsv",
-#'group_a_name = 'GFP',
-#'group_a_samples  = c("G.F1","G.F3","G.M"),
-#'group_b_name = 'WSS',
-#'group_b_samples = c("W.F1","W.F2","W.M1")
-#')
-#' @param save_Plot
-#' @param file_Dir
-#' @param file_Name
-#'
 #' @return
 #' @export
 #'
 #' @examples
 plot_PCA <- function(dds,save_Plot = FALSE,file_Dir = './',file_Name = 'All_Samples_PCA_removeBatch.pdf'){
   rld <- DESeq2::rlog(dds, blind = FALSE)
-  pheno <- SummarizedExperiment::colData(dds)
-  data_pca <- as.data.frame(t(as.data.frame(SummarizedExperiment::assay(rld))[,pheno$Sample]))
-  res.pca <- FactoMineR::PCA(data_pca, graph = FALSE)
-  pca <- factoextra::fviz_pca_ind(res.pca,
-                      geom = c("point", "text"),
-                      geom.ind = c("point", "text"), # show points only (nbut not "text")
-                      col.ind = as.character(pheno$Condition), # color by groups
-                      fill.ind = pheno$Condition,
-                      palette = "jco",
-                      mean.point = FALSE,pointsize = 3,
-                      pointshape = 20,
-                      repel = T,
-                      ellipse.type = "confidence",
-                      addEllipses = T, # Concentration ellipses
-                      legend.title = "Groups",
-                      ggtheme = theme_bw(),
-                      title = "Principal Component Analysis")
-  if (save_Plot){
-    ggplot2::ggsave(paste0(file_Dir,file_Name),width = 8,height = 6,plot = pca)
-  }
-  pca
+  data <- DESeq2::plotPCA(rld, returnData=TRUE,intgroup="Condition")
+  percentVar <- round(100 * attr(data, "percentVar"))
+  pca <- ggpubr::ggscatter(data,"PC1","PC2",color = "Condition",
+                    label = 'name',  size = 5,repel = T,
+                    palette ="jama",#杂志jama的配色
+                    ellipse = TRUE,#画椭圆
+                    mean.point = F,
+                    star.plot = F  #生成星图
+  ) +
+    xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+    ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+    theme_bw(base_size = 18,base_line_size = 1) +
+    ggtitle("Principal Component Analysis")
+
+    if (save_Plot){
+      ggplot2::ggsave(paste0(file_Dir,file_Name),width = 8,height = 6,plot = pca)
+    }
+    pca
+
 }
+
+
+
+# .plot_PCA <- function(dds,save_Plot = FALSE,file_Dir = './',file_Name = 'All_Samples_PCA_removeBatch.pdf'){
+#   rld <- DESeq2::rlog(dds, blind = FALSE)
+#   pheno <- SummarizedExperiment::colData(dds)
+#   data_pca <- as.data.frame(t(as.data.frame(SummarizedExperiment::assay(rld))[,pheno$Sample]))
+#   res.pca <- FactoMineR::PCA(data_pca, graph = FALSE)
+#   pca <- factoextra::fviz_pca_ind(res.pca,
+#                       geom = c("point", "text"),
+#                       geom.ind = c("point", "text"), # show points only (nbut not "text")
+#                       col.ind = as.character(pheno$Condition), # color by groups
+#                       fill.ind = pheno$Condition,
+#                       palette = "jco",
+#                       mean.point = FALSE,pointsize = 3,
+#                       pointshape = 20,
+#                       repel = T,
+#                       ellipse.type = "confidence",
+#                       addEllipses = T, # Concentration ellipses
+#                       legend.title = "Groups",
+#                       ggtheme = theme_bw(),
+#                       title = "Principal Component Analysis")
+#   if (save_Plot){
+#     ggplot2::ggsave(paste0(file_Dir,file_Name),width = 8,height = 6,plot = pca)
+#   }
+#   pca
+# }
+
 
 #' Title
 #'

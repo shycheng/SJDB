@@ -11,18 +11,6 @@ plot_PCA(
   file_Name = "All_Samples_PCA_removeBatch.pdf"
 )
 }
-\arguments{
-\item{dds}{dds object ,eg :
-dds <- run_DESeq2(
-count_data = "~/Projects/RNASeq_CGW_20221014/2.Results/SnakePipe_outputs/featureCounts/counts.tsv",
-group_a_name = 'GFP',
-group_a_samples  = c("G.F1","G.F3","G.M"),
-group_b_name = 'WSS',
-group_b_samples = c("W.F1","W.F2","W.M1")
-)}
-
-\item{file_Name}{}
-}
 \description{
 Title plot PCA
 }

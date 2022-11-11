@@ -10,7 +10,7 @@ japonicum
 
 ## Installation
 
-You can install the development version of SJDB like so:
+You can install the development version of SJDB like this:
 
 ``` r
 install.packages("remotes")
@@ -31,19 +31,9 @@ library(SJDB)
 
 # install.packages("SJDB_Data/org.Sjaponicum.eg.db",repos = NULL)
 
-# library all packages requried for analysi
-library(org.Sjaponicum.eg.db)
-library(writexl)
-library(DESeq2)
-library(clusterProfiler)
-library(ggplot2)
-library(FactoMineR)
-library(factoextra)
-library(patchwork)
-library(ggpubr)
+# library all packages requried for analysis
 library(org.Sjaponicum.eg.db)
 library(EnhancedVolcano)
-
 
 #> Loading required package: AnnotationDbi
 #> Loading required package: stats4
