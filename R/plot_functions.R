@@ -347,7 +347,7 @@ Plot_enhancedVolcano <- function(Diff_res,n=5,Dir,save_Plot=FALSE
                   selectLab = selectLab,
                   x = 'log2FoldChange',
                   y = 'padj',
-                  title = prefix,
+                  title = prefix,drawConnectors = T,
                   pCutoff = p_cutoff,
                   FCcutoff = FC_cutoff)
   if(save_Plot==TRUE){

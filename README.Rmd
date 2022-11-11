@@ -90,7 +90,7 @@ Plot_corr_heatmap(dds,savePlot = T,fileDir = '~/Projects/RNASeq_YC_20220810/2.Re
 
 ```{r echo=TRUE}
 
-diffres <- get_mRNA_diff(dds,x= 'GFP',y = 'One2',p_cutoff = 0.05,FC_cutoff = 1)
+diffres <- get_mRNA_diff(dds,x= 'GFP_F',y = 'One2_F',p_cutoff = 0.05,FC_cutoff = 1)
 
 ```
 
