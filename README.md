@@ -33,7 +33,6 @@ library(SJDB)
 
 # library all packages requried for analysis
 library(org.Sjaponicum.eg.db)
-library(EnhancedVolcano)
 
 #> Loading required package: AnnotationDbi
 #> Loading required package: stats4
