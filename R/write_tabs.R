@@ -7,7 +7,7 @@
 #' @export
 #'
 #' @examples
-ExptoXlSX <- function(dds,Dir){
+ExptoXlSX <- function(dds,Dir='./'){
   NormData <- BiocGenerics::counts(dds, normalized = TRUE)
   writexl::write_xlsx(as.data.frame(NormData),
                       path = paste(Dir,"RNASeq_NormExpression.xlsx",sep = ''),col_names = T,format_headers = T)
@@ -23,7 +23,7 @@ ExptoXlSX <- function(dds,Dir){
 #' @export
 #'
 #' @examples
-DEtoXlSX <- function(Diff_res,Dir){
+DEtoXlSX <- function(Diff_res,Dir='./'){
   prefix=paste(Diff_res$Group[1],Diff_res$Group[2],sep = "_VS_")
   writexl::write_xlsx(x = list(Up_regulated = as.data.frame(Diff_res$up_gene),
                       Down_regulated = as.data.frame(Diff_res$down_gene)),
@@ -73,7 +73,7 @@ GOtoXlSX <- function(Diff_res,Dir='./'){
 #' @export
 #'
 #' @examples
-GSEAtoXlSX <- function(Diff_res,Dir,pvalueCutoff=0.5){
+GSEAtoXlSX <- function(Diff_res,Dir='./',pvalueCutoff=0.5){
   plotDir = Dir
   prefix=paste(Diff_res$Group[1],Diff_res$Group[2],sep = "_VS_")
   kk <- clusterProfiler::GSEA(geneList = Diff_res$rankGeneList,
