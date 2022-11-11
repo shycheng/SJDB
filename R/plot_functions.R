@@ -65,7 +65,7 @@ plot_PCA <- function(dds,save_Plot = FALSE,file_Dir = './',file_Name = 'All_Samp
 #' @export
 #'
 #' @examples
-Plot_corr_heatmap <- function(dds,fileDir,type='pearson',savePlot=FALSE){
+Plot_corr_heatmap <- function(dds,fileDir='./',type='pearson',savePlot=FALSE){
   rld <- DESeq2::rlog(dds, blind = FALSE)
   cor_matrix <- stats::cor(SummarizedExperiment::assay(rld),method = type)
   cor_heatmap <- pheatmap::pheatmap(cor_matrix,show_rownames = T,show_colnames = T,
@@ -119,7 +119,7 @@ getDEtab<- function(Diff_res){
 #' @export
 #'
 #' @examples
-Plot_volcano <- function(Diff_res,Dir,save_Plot){
+Plot_volcano <- function(Diff_res,Dir='./',save_Plot=TRUE){
   DEtab <- getDEtab(Diff_res = Diff_res)
   prefix=paste(Diff_res$Group[1],Diff_res$Group[2],sep = "_VS_")
   filename = paste(Dir,prefix,"_volcano.pdf")
@@ -157,7 +157,7 @@ Plot_volcano <- function(Diff_res,Dir,save_Plot){
 #' @export
 #'
 #' @examples
-Plot_heatmap <- function(Diff_res,Dir,dds,save_Plot,show_rownames=FALSE){
+Plot_heatmap <- function(Diff_res,dds,Dir='./',save_Plot=TRUE,show_rownames=FALSE){
   pheno = SummarizedExperiment::colData(dds)
   logExpression <- as.data.frame(SummarizedExperiment::assay(rlog(dds, blind = FALSE)))
   prefix=paste(Diff_res$Group[1],Diff_res$Group[2],sep = "_VS_")
@@ -195,7 +195,7 @@ Plot_heatmap <- function(Diff_res,Dir,dds,save_Plot,show_rownames=FALSE){
 #' @export
 #'
 #' @examples
-PlotKEGG <- function(Diff_res,Dir,save_Plot){
+PlotKEGG <- function(Diff_res,Dir='./',save_Plot=TRUE){
   universeIDs=rownames(Diff_res$res)
   prefix=paste(Diff_res$Group[1],Diff_res$Group[2],sep = "_VS_")
   upfilename = paste(Dir,prefix,"_KEGG_Pathway_Up.pdf")
@@ -335,7 +335,7 @@ get_TopLabel <- function(df,n=5){
 #' @export
 #'
 #' @examples
-Plot_enhancedVolcano <- function(Diff_res,n=5,Dir,save_Plot=FALSE
+Plot_enhancedVolcano <- function(Diff_res,n=5,Dir='./',save_Plot=FALSE
                                  ,p_cutoff =0.05,FC_cutoff=1){
   DF <- as.data.frame(Diff_res$Res)
   rownames(DF) <- Diff_res$Res$SYMBOL
