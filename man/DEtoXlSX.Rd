@@ -4,7 +4,7 @@
 \alias{DEtoXlSX}
 \title{Title save different expression genes to excel files}
 \usage{
-DEtoXlSX(Diff_res, Dir)
+DEtoXlSX(Diff_res, Dir = "./")
 }
 \arguments{
 \item{Dir}{default dir path: "2.Results/R_outputs/Tables/"}

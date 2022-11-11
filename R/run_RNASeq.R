@@ -20,6 +20,7 @@
 #' @param group_g_samples a list of samples in group , must in the colname of count_data
 #' @param group_h_name group names
 #' @param group_h_samples a list of samples in group , must in the colname of count_data
+#' @param groupList
 #'
 #' @return a dds class for downstream analysis
 #' @export
@@ -154,6 +155,19 @@ get_mRNA_diff <- function(dds=dds,group="Condition",x,y,p_cutoff=0.05,FC_cutoff=
 #' @param FC_cutoff
 #' @param save_Plot
 #' @param file_Dir
+#' @param groupList
+#' @param group_c_name
+#' @param group_c_samples
+#' @param group_d_name
+#' @param group_d_samples
+#' @param group_e_name
+#' @param group_e_samples
+#' @param group_f_name
+#' @param group_f_samples
+#' @param group_g_name
+#' @param group_g_samples
+#' @param group_h_name
+#' @param group_h_samples
 #'
 #' @return
 #' @export

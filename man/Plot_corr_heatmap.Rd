@@ -4,7 +4,7 @@
 \alias{Plot_corr_heatmap}
 \title{Title}
 \usage{
-Plot_corr_heatmap(dds, fileDir, type = "pearson", savePlot = FALSE)
+Plot_corr_heatmap(dds, fileDir = "./", type = "pearson", savePlot = FALSE)
 }
 \arguments{
 \item{type}{}

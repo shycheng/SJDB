@@ -4,7 +4,7 @@
 \alias{ExptoXlSX}
 \title{Title}
 \usage{
-ExptoXlSX(dds, Dir)
+ExptoXlSX(dds, Dir = "./")
 }
 \arguments{
 \item{Dir}{}

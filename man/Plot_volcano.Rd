@@ -4,7 +4,7 @@
 \alias{Plot_volcano}
 \title{Title}
 \usage{
-Plot_volcano(Diff_res, Dir, save_Plot)
+Plot_volcano(Diff_res, Dir = "./", save_Plot = TRUE)
 }
 \arguments{
 \item{Dir}{}

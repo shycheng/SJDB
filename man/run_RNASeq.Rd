@@ -6,20 +6,33 @@
 \usage{
 run_RNASeq(
   count_data,
-  group_a_name,
-  group_a_samples,
-  group_b_name,
-  group_b_samples,
+  groupList = c("GFP", "dsRNA"),
+  group_a_name = NULL,
+  group_a_samples = NULL,
+  group_b_name = NULL,
+  group_b_samples = NULL,
+  group_c_name = NULL,
+  group_c_samples = NULL,
+  group_d_name = NULL,
+  group_d_samples = NULL,
+  group_e_name = NULL,
+  group_e_samples = NULL,
+  group_f_name = NULL,
+  group_f_samples = NULL,
+  group_g_name = NULL,
+  group_g_samples = NULL,
+  group_h_name = NULL,
+  group_h_samples = NULL,
   pheno_file = "",
   batch = NULL,
   p_cutoff = 0.05,
   FC_cutoff = 1,
-  save_Plot,
-  file_Dir
+  save_Plot = TRUE,
+  file_Dir = "./"
 )
 }
 \arguments{
-\item{file_Dir}{}
+\item{group_h_samples}{}
 }
 \description{
 Title

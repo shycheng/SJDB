@@ -7,7 +7,7 @@
 Plot_enhancedVolcano(
   Diff_res,
   n = 5,
-  Dir,
+  Dir = "./",
   save_Plot = FALSE,
   p_cutoff = 0.05,
   FC_cutoff = 1

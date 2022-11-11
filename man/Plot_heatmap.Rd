@@ -4,7 +4,13 @@
 \alias{Plot_heatmap}
 \title{Title}
 \usage{
-Plot_heatmap(Diff_res, Dir, dds, save_Plot, show_rownames = FALSE)
+Plot_heatmap(
+  Diff_res,
+  dds,
+  Dir = "./",
+  save_Plot = TRUE,
+  show_rownames = FALSE
+)
 }
 \arguments{
 \item{Dir}{}

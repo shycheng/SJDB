@@ -4,7 +4,7 @@
 \alias{PlotKEGG}
 \title{Title}
 \usage{
-PlotKEGG(Diff_res, Dir, save_Plot)
+PlotKEGG(Diff_res, Dir = "./", save_Plot = TRUE)
 }
 \arguments{
 \item{Dir}{}
