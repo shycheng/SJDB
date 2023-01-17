@@ -223,5 +223,3 @@ scBubbHeat(shinycell_prefix = ShinyCell_prefix_male,inp = input_IDs ,
 
 ```
 
-<img src="man/figures/README-Single-cell_male-upGenes.png" width="40%" />
-
