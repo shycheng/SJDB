@@ -36,15 +36,18 @@ DEtoXlSX <- function(Diff_res,Dir='./'){
 #'
 #' @param Diff_res
 #' @param Dir
+#' @param version
 #'
 #' @return
 #' @export
 #'
 #' @examples
-GOtoXlSX <- function(Diff_res,Dir='./'){
+GOtoXlSX <- function(Diff_res,Dir='./',version = "V3"){
   prefix=paste(Diff_res$Group[1],Diff_res$Group[2],sep = "_VS_")
-  up_go = getGO(genes = Diff_res$up_gene$SYMBOL,universeIDs = names(Diff_res$rankGeneList))$GO_df
-  down_go = getGO(genes = Diff_res$down_gene$SYMBOL,universeIDs = names(Diff_res$rankGeneList))$GO_df
+  up_go = getGO(genes = Diff_res$up_gene$SYMBOL,version =version,
+                universeIDs = names(Diff_res$rankGeneList))$GO_df
+  down_go = getGO(genes = Diff_res$down_gene$SYMBOL,version =version,
+                  universeIDs = names(Diff_res$rankGeneList))$GO_df
   if ( is.null(up_go)) {
     print("There are no enrichment results of up regulated genes")
   }else{
@@ -66,14 +69,26 @@ GOtoXlSX <- function(Diff_res,Dir='./'){
 #'
 #' @param Diff_res
 #' @param Dir
-#' @param plotDir
 #' @param pvalueCutoff
+#' @param version
 #'
 #' @return
 #' @export
 #'
 #' @examples
-GSEAtoXlSX <- function(Diff_res,Dir='./',pvalueCutoff=0.5){
+GSEAtoXlSX <- function(Diff_res,Dir='./',
+                       pvalueCutoff=0.5,
+                       version = "V3"){
+
+  if (version == "V3") {
+    OrgDB <- "org.Sjaponicum.eg.db"
+  }else if (version == "V4"){
+    OrgDB <- "org.SjaponicumV4.eg.db"
+  }else{
+    print("Please provide genome version V3 or V4!")
+  }
+
+
   plotDir = Dir
   prefix=paste(Diff_res$Group[1],Diff_res$Group[2],sep = "_VS_")
   kk <- clusterProfiler::GSEA(geneList = Diff_res$rankGeneList,
@@ -87,18 +102,18 @@ GSEAtoXlSX <- function(Diff_res,Dir='./',pvalueCutoff=0.5){
               pvalueCutoff = pvalueCutoff,
               pAdjustMethod = "BH",
               minGSSize = 10,
-              maxGSSize = 500,ont = 'BP',OrgDb = 'org.Sjaponicum.eg.db',keyType = 'GENEID')
+              maxGSSize = 500,ont = 'BP',OrgDb = OrgDB,keyType = 'GENEID')
   cc <- clusterProfiler::gseGO(geneList = Diff_res$rankGeneList,
               pvalueCutoff = pvalueCutoff,
               pAdjustMethod = "BH",
               minGSSize = 10,
-              maxGSSize = 500,ont = 'CC',OrgDb = 'org.Sjaponicum.eg.db',keyType = 'GENEID')
+              maxGSSize = 500,ont = 'CC',OrgDb = OrgDB,keyType = 'GENEID')
 
   mf <- clusterProfiler::gseGO(geneList = Diff_res$rankGeneList,
               pvalueCutoff = pvalueCutoff,
               pAdjustMethod = "BH",
               minGSSize = 10,
-              maxGSSize = 500,ont = 'MF',OrgDb = 'org.Sjaponicum.eg.db',keyType = 'GENEID')
+              maxGSSize = 500,ont = 'MF',OrgDb = OrgDB,keyType = 'GENEID')
   if ( is.null(kk)) {
     print("There are no enrichment results of gsea KEGG")
   }else{

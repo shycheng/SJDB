@@ -4,10 +4,10 @@
 \alias{getGO}
 \title{Title}
 \usage{
-getGO(genes, universeIDs, qCutoff = 0.05)
+getGO(genes, universeIDs, qCutoff = 0.05, version = "V3")
 }
 \arguments{
-\item{qCutoff}{}
+\item{version}{default: V3 , V3 -- "org.Sjaponicum.eg.db" V4 -- "org.SjaponicumV4.eg.db"}
 }
 \description{
 Title

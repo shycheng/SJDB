@@ -234,14 +234,15 @@ PlotKEGG <- function(Diff_res,Dir='./',save_Plot=TRUE){
 #' @param Diff_res
 #' @param DIR
 #' @param p_cutoff
+#' @param version
 #'
 #' @return
 #' @export
 #'
 #' @examples
-Plot_DE_GOTerms <- function(Diff_res,DIR='./',p_cutoff=0.05){
+Plot_DE_GOTerms <- function(Diff_res,DIR='./',p_cutoff=0.05,version){
   prefix=paste(Diff_res$Group[1],Diff_res$Group[2],sep = "_VS_")
-  GO_tab <- getGO(Diff_res$up_gene$SYMBOL)$GO_df %>%
+  GO_tab <- getGO(Diff_res$up_gene$SYMBOL,version =version)$GO_df %>%
     dplyr::arrange(type,p.adjust) %>%
     dplyr::filter(p.adjust < p_cutoff)
   test <- data.frame(row.names =GO_tab$Description,`-log10(padjust)`=-log10(GO_tab$p.adjust))
@@ -259,7 +260,7 @@ Plot_DE_GOTerms <- function(Diff_res,DIR='./',p_cutoff=0.05){
            color = colorRampPalette(c("white","firebrick3" ),bias=1)(100),main = paste("High expression in :",Diff_res$Group[1]),
            filename = paste(DIR,prefix,paste("_High_",Diff_res$Group[1]),"_GOTerms.pdf"))
 
-  GO_tab2 <- getGO(Diff_res$down_gene$SYMBOL)$GO_df %>%
+  GO_tab2 <- getGO(Diff_res$down_gene$SYMBOL,version = version)$GO_df %>%
     arrange(type,p.adjust)
   test2 <- data.frame(row.names =GO_tab2$Description,`-log10(padjust)`=-log10(GO_tab2$p.adjust))
   anno = data.frame(row.names =GO_tab2$Description,type=factor(GO_tab2$type))

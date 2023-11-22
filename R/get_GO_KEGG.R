@@ -17,15 +17,23 @@ getGeneInfo <- function(geneid){
 #' @param genes
 #' @param universeIDs
 #' @param qCutoff
+#' @param version default: V3 , V3 -- "org.Sjaponicum.eg.db" V4 -- "org.SjaponicumV4.eg.db"
 #'
 #' @return
 #' @export
 #'
 #' @examples
-getGO <- function(genes,universeIDs,qCutoff=0.05){
+getGO <- function(genes,universeIDs,qCutoff=0.05,version = "V3"){
+  if (version == "V3") {
+    OrgDB <- "org.Sjaponicum.eg.db"
+  }else if (version == "V4"){
+    OrgDB <- "org.SjaponicumV4.eg.db"
+  }else{
+    print("Please provide genome version V3 or V4!")
+  }
   BP <- clusterProfiler::enrichGO(
     gene = genes,
-    OrgDb = "org.Sjaponicum.eg.db",
+    OrgDb = OrgDB,
     keyType = "GENEID",
     ont = "BP",
     pvalueCutoff = 0.05,
@@ -38,7 +46,7 @@ getGO <- function(genes,universeIDs,qCutoff=0.05){
   )
   CC <- clusterProfiler::enrichGO(
     gene = genes,
-    OrgDb = "org.Sjaponicum.eg.db",
+    OrgDb = OrgDB,
     keyType = "GENEID",
     ont = "CC",
     pvalueCutoff = 0.05,
@@ -51,7 +59,7 @@ getGO <- function(genes,universeIDs,qCutoff=0.05){
   )
   MF <- clusterProfiler::enrichGO(
     gene = genes,
-    OrgDb = "org.Sjaponicum.eg.db",
+    OrgDb = OrgDB,
     keyType = "GENEID",
     ont = "MF",
     pvalueCutoff = 0.05,
@@ -96,24 +104,32 @@ getGO <- function(genes,universeIDs,qCutoff=0.05){
 }
 
 
+
 #' Title
 #'
 #' @param geneid
 #' @param universeIDs
+#' @param version
 #'
 #' @return
 #' @export
 #'
 #' @examples
-getKEGG <- function(geneid,universeIDs){
-  KEGG_tab <- clusterProfiler::enricher(geneid,
-                       pvalueCutoff = 0.05,
-                       pAdjustMethod = "BH",
-                       universe = universeIDs,
-                       minGSSize = 10,
-                       maxGSSize = 500,
-                       qvalueCutoff = 0.2,
-                       TERM2GENE,
-                       TERM2NAME = TERM2NAME)
+getKEGG <- function(geneid,universeIDs,version = "V3"){
+  if (version == "V3") {
+    KEGG_tab <- clusterProfiler::enricher(geneid,
+                                          pvalueCutoff = 0.05,
+                                          pAdjustMethod = "BH",
+                                          universe = universeIDs,
+                                          minGSSize = 10,
+                                          maxGSSize = 500,
+                                          qvalueCutoff = 0.2,
+                                          TERM2GENE,
+                                          TERM2NAME = TERM2NAME)
+  }else{
+    print("Only used in sjV3")
+
+    KEGG_tab <- NULL
+  }
   return(KEGG_tab)
 }

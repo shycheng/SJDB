@@ -32,7 +32,7 @@
 #'   group_b_name = 'WSS',
 #'   group_b_samples = c("W.F1","W.F2","W.M1")
 #' )
-run_DESeq2 <- function(count_data,groupList=c('GFP','dsRNA'),
+oldrun_DESeq2 <- function(count_data,groupList=c('GFP','dsRNA'),
                        group_a_name=NULL, group_a_samples=NULL,
                        group_b_name=NULL, group_b_samples=NULL,
                        group_c_name=NULL, group_c_samples=NULL,
