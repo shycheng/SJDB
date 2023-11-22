@@ -29,7 +29,7 @@ revID <- function(ID) {
 
 # 定义Assay类
 setClass(
-  "Assay",
+  "RNA_Assay",
   slots = c(
     counts = "data.frame",
     tpm = "data.frame",
@@ -44,13 +44,13 @@ Assay <- function(counts) {
     stop("'counts' must be a data.frame")
   }
   # 创建Assay对象，其中tpm和deseq2是空的data.frames
-  new("Assay", counts = counts, tpm = data.frame(), deseq2 = data.frame())
+  new("RNA_Assay", counts = counts, tpm = data.frame(), deseq2 = data.frame())
 }
 
 
 #' Title 定义一个名为Person的S4类，它有三个属性：Assay 类 , pheno 和 outDir
 #'
-#' @slot assay Assay.
+#' @slot assay RNA_Assay
 #' @slot pheno data.frame.
 #' @slot outDir character.
 #' @slot dds DESeqDataSet.
@@ -64,7 +64,7 @@ Assay <- function(counts) {
 setClass(
   "RNASeqOBJ",
   slots = c(
-    assay = "Assay", # 使用Assay类作为slot
+    assay = "RNA_Assay", # 使用Assay类作为slot
     pheno = "data.frame",
     outDir = "character",
     dds = "ANY",

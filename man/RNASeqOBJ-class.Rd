@@ -10,7 +10,7 @@ Title 定义一个名为Person的S4类，它有三个属性：Assay 类 , pheno 
 \section{Slots}{
 
 \describe{
-\item{\code{assay}}{Assay.}
+\item{\code{assay}}{RNA_Assay}
 
 \item{\code{pheno}}{data.frame.}
 
