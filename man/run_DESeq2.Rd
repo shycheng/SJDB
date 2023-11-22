@@ -4,10 +4,10 @@
 \alias{run_DESeq2}
 \title{Title}
 \usage{
-run_DESeq2(object = NULL, design = ~Condition)
+run_DESeq2(object = NULL, design = ~Condition, force = FALSE)
 }
 \arguments{
-\item{design}{}
+\item{force}{}
 }
 \description{
 Title

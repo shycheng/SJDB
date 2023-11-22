@@ -75,12 +75,3 @@ a dds class for downstream analysis
 \description{
 Title A pipeline of run RNA-seq DEGs analysis and mini database of Schistosoma japonicum
 }
-\examples{
-dds <- run_DESeq2(
-  count_data = "~/Projects/RNASeq_CGW_20221014/2.Results/SnakePipe_outputs/featureCounts/counts.tsv",
-  group_a_name = 'GFP',
-  group_a_samples  = c("G.F1","G.F3","G.M"),
-  group_b_name = 'WSS',
-  group_b_samples = c("W.F1","W.F2","W.M1")
-)
-}

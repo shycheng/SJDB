@@ -6,11 +6,12 @@
 #' @export
 #'
 #' @examples
-revID <- function(ID){
-  if (sum(stringr::str_count(ID,'-')) > 0) {
-    id <- gsub('-','_',ID)
-  }else
-    id <- gsub('_','-',ID)
+revID <- function(ID) {
+  if (sum(stringr::str_count(ID, "-")) > 0) {
+    id <- gsub("-", "_", ID)
+  } else {
+    id <- gsub("_", "-", ID)
+  }
   return(id)
 }
 
@@ -65,8 +66,8 @@ setClass(
   slots = c(
     assay = "Assay", # 使用Assay类作为slot
     pheno = "data.frame",
-    outDir = 'character',
-    dds = "DESeqDataSet",
+    outDir = "character",
+    dds = "ANY",
     contrast_df = "data.frame",
     diffres = "list"
   ),
@@ -80,7 +81,7 @@ setClass(
   for (dirName in dirsToCreate) {
     dirPath <- file.path(outDir, dirName)
     if (!dir.exists(dirPath)) {
-      dir.create(dirPath,recursive = T)
+      dir.create(dirPath, recursive = T)
     }
   }
 }
@@ -96,7 +97,7 @@ setClass(
 #' @export
 #'
 
-RNASeqOBJ <- function(counts, pheno = data.frame(),outDir='./') {
+RNASeqOBJ <- function(counts, pheno = data.frame(), outDir = "./") {
   # Check for pheno validity
   .check_phenoTab(pheno)
 
@@ -110,21 +111,21 @@ RNASeqOBJ <- function(counts, pheno = data.frame(),outDir='./') {
 
   # Create RNASeqOBJ object
   new("RNASeqOBJ",
-      assay = assay,
-      pheno = pheno,
-      outDir = outDir,
-      dds = NULL, # 允许dds在初始时为NULL
-      contrast_df = data.frame(),
-      diffres = list()
-      )
+    assay = assay,
+    pheno = pheno,
+    outDir = outDir,
+    dds = NULL, # 允许dds在初始时为NULL
+    contrast_df = data.frame(),
+    diffres = list()
+  )
 }
 
 
-.validRNASeqOBJ <- function(RNASeqOBJ = NULL){
+.validRNASeqOBJ <- function(RNASeqOBJ = NULL) {
   stopifnot(!is.null(RNASeqOBJ))
-  if(inherits(RNASeqOBJ, "RNASeqOBJ")){
+  if (inherits(RNASeqOBJ, "RNASeqOBJ")) {
     return(RNASeqOBJ)
-  }else{
+  } else {
     stop("Cannot validate RNASeqOBJ options are a valid RNASeqOBJ")
   }
 }
@@ -146,44 +147,45 @@ RNASeqOBJ <- function(counts, pheno = data.frame(),outDir='./') {
 #'
 #' @examples
 fill_TPM <- function(object = NULL,
-                     version = 'V3',
+                     version = "V3",
                      gtf_file = NULL) {
   .validRNASeqOBJ(object)
 
   # TPM 标准化
   ### 获取基因非重叠外显子长度
-  if (version == 'V3') {
+  if (version == "V3") {
     txdb <- GenomicFeatures::makeTxDbFromGFF(file = gtf_file)
-  } else if(version == 'V4'){
+  } else if (version == "V4") {
     txdb <- GenomicFeatures::makeTxDbFromGFF(file = gtf_file)
-  }else{
+  } else {
     print("Error,please provide genome version V3 or V4!")
   }
 
 
   # then collect the exons per gene id
-  exons.list.per.gene <- GenomicRanges::exonsBy(txdb, by="gene")
+  exons.list.per.gene <- GenomicFeatures::exonsBy(txdb, by = "gene")
 
   # then for each gene, reduce all the exons to a set of non overlapping exons,
   # calculate their lengths (widths) and sum then
   exonic.gene.sizes <- sum(width(GenomicRanges::reduce(exons.list.per.gene)))
 
   ### TPM标准化公式
-  r_tpm <- function(dfr,len)
-  {
-    dfr1 <- sweep(dfr,MARGIN=1,(len/10^4),`/`)
-    scf <- colSums(dfr1)/(10^6)
-    return(sweep(dfr1,2,scf,`/`))
+  r_tpm <- function(dfr, len) {
+    dfr1 <- sweep(dfr, MARGIN = 1, (len / 10^4), `/`)
+    scf <- colSums(dfr1) / (10^6)
+    return(sweep(dfr1, 2, scf, `/`))
   }
 
-  TPM <- r_tpm(object@assay@counts,exonic.gene.sizes[rownames(object@assay@counts)])
+  TPM <- r_tpm(object@assay@counts, exonic.gene.sizes[rownames(object@assay@counts)])
   object@assay@tpm <- TPM
 
-  TPM$Annotation <- SJDB::id2name[rownames(object@assay@counts),'Note']
+  TPM$Annotation <- SJDB::id2name[rownames(object@assay@counts), "Note"]
 
-  write.csv(TPM,file = file.path(object@outDir,"Summary","Expression_TPM_addAnnotation.csv"),
-            quote = F,
-            row.names = T)
+  write.csv(TPM,
+    file = file.path(object@outDir, "Summary", "Expression_TPM_addAnnotation.csv"),
+    quote = F,
+    row.names = T
+  )
 
   object
 }
@@ -203,13 +205,13 @@ plot_PCA <- function(object = NULL,
                      assay = "tpm",
                      show = TRUE) {
   .validRNASeqOBJ(object)
-  if (assay == 'counts') {
+  if (assay == "counts") {
     mat <- object@assay@counts
-  }else if(assay == 'tpm'){
+  } else if (assay == "tpm") {
     mat <- object@assay@tpm
-  }else if(assay == 'deseq2'){
+  } else if (assay == "deseq2") {
     mat <- object@assay@deseq2
-  }else{
+  } else {
     stop("'Please choose a assay to PCA'")
   }
   pca <- FactoMineR::PCA(t(mat), scale.unit = TRUE, ncp = 5)
@@ -218,16 +220,18 @@ plot_PCA <- function(object = NULL,
   pca_df$condition <- object@pheno$Condition
   pca_df$Treat <- object@pheno$Treat
   pca_df$name <- rownames(pca_df)
-  pca_plot <- ggpubr::ggscatter(pca_df,"Dim.1","Dim.2",color = "condition",size = 5,label = "name",repel = T) +
-    xlab(paste0("PC1: ",round(pca$eig[,2][1],digits = 2),"% variance")) +
-    ylab(paste0("PC2: ",round(pca$eig[,2][2],digits = 2),"% variance")) +
-    theme_bw(base_size = 18,base_line_size = 1) +
+  pca_plot <- ggpubr::ggscatter(pca_df, "Dim.1", "Dim.2", color = "condition", size = 5, label = "name", repel = T) +
+    xlab(paste0("PC1: ", round(pca$eig[, 2][1], digits = 2), "% variance")) +
+    ylab(paste0("PC2: ", round(pca$eig[, 2][2], digits = 2), "% variance")) +
+    theme_bw(base_size = 18, base_line_size = 1) +
     ggtitle("PCA")
 
-  ggplot2::ggsave(filename = file.path(object@outDir,"Summary",sprintf("%s_pca.pdf",assay)),
-         plot = pca_plot,
-         width = 12,
-         height = 8)
+  ggplot2::ggsave(
+    filename = file.path(object@outDir, "Summary", sprintf("%s_pca.pdf", assay)),
+    plot = pca_plot,
+    width = 12,
+    height = 8
+  )
 
   if (show) {
     pca_plot
@@ -247,36 +251,40 @@ plot_PCA <- function(object = NULL,
 #' @export
 #'
 #' @examples
-plot_corHeatmap <-  function(object = NULL,
-                             assay = "tpm",
-                             method = 'pearson',
-                             cluster_rows = FALSE,
-                             cluster_cols= FALSE,
-                             show = TRUE
-                             ) {
+plot_corHeatmap <- function(object = NULL,
+                            assay = "tpm",
+                            method = "pearson",
+                            cluster_rows = FALSE,
+                            cluster_cols = FALSE,
+                            show = TRUE) {
   .validRNASeqOBJ(object)
 
-  if (assay == 'counts') {
+  if (assay == "counts") {
     mat <- object@assay@counts
-  }else if(assay == 'tpm'){
+  } else if (assay == "tpm") {
     mat <- object@assay@tpm
-  }else if(assay == 'deseq2'){
+  } else if (assay == "deseq2") {
     mat <- object@assay@deseq2
-  }else{
+  } else {
     stop("'Please choose a assay to plot_corHeatmap'")
   }
   cor_matrix <- cor(mat,
-                    method = method)
-  cor_heatmap <- pheatmap::pheatmap(cor_matrix,show_rownames = T,show_colnames = T,
-                                    cluster_cols = cluster_cols,
-                                    cluster_rows = cluster_rows,
-                                    main = sprintf("Samples' %s correlation coefficient",method),
-                                    fontsize = 15,display_numbers = F,fontsize_number = 12)
+    method = method
+  )
+  cor_heatmap <- pheatmap::pheatmap(cor_matrix,
+    show_rownames = T, show_colnames = T,
+    cluster_cols = cluster_cols,
+    cluster_rows = cluster_rows,
+    main = sprintf("Samples' %s correlation coefficient", method),
+    fontsize = 15, display_numbers = F, fontsize_number = 12
+  )
 
-  ggsave(filename = file.path(object@outDir,"Summary",sprintf("%s_%s_corHeatmap.pdf",assay,method)),
-         plot = cor_heatmap,
-         width = 16,
-         height = 16)
+  ggsave(
+    filename = file.path(object@outDir, "Summary", sprintf("%s_%s_corHeatmap.pdf", assay, method)),
+    plot = cor_heatmap,
+    width = 16,
+    height = 16
+  )
 
   if (show) {
     cor_heatmap
@@ -302,9 +310,11 @@ run_DESeq2 <- function(object = NULL, design = ~Condition, force = FALSE) {
 
   # 准备DESeqDataSet对象
   .prepareDESeqDataSet <- function(object, design) {
-    dds <- DESeq2::DESeqDataSetFromMatrix(countData = object@assay@counts,
-                                          colData = object@pheno,
-                                          design = design)
+    dds <- DESeq2::DESeqDataSetFromMatrix(
+      countData = object@assay@counts,
+      colData = object@pheno,
+      design = design
+    )
     dds <- dds[rowMeans(counts(dds)) >= 5, ]
     return(dds)
   }
@@ -339,8 +349,8 @@ run_DESeq2 <- function(object = NULL, design = ~Condition, force = FALSE) {
 #' @export
 #'
 #' @examples
-createContrastDataFrame <-  function(object = NULL,
-                                     control = 'dsGFP') {
+createContrastDataFrame <- function(object = NULL,
+                                    control = "dsGFP") {
   .validRNASeqOBJ(object)
 
   pheno <- object@pheno
@@ -372,26 +382,28 @@ createContrastDataFrame <-  function(object = NULL,
 #' @export
 #'
 #' @examples
-processContrasts <-  function(object = NULL,
-                              p_cutoff = 0.05,
-                              FC_cutoff = log2(1.5)) {
+processContrasts <- function(object = NULL,
+                             p_cutoff = 0.05,
+                             FC_cutoff = log2(1.5)) {
   .validRNASeqOBJ(object)
   contrast_df <- object@contrast_df
   dds <- object@dds
 
   # 定义内部函数
   get_res <- function(i) {
-    get_mRNA_diff(dds = dds,
-                  group = "Condition",
-                  x = contrast_df$group.x[i],
-                  y = contrast_df$group.y[i],
-                  p_cutoff = p_cutoff,
-                  FC_cutoff = FC_cutoff)
+    get_mRNA_diff(
+      dds = dds,
+      group = "Condition",
+      x = contrast_df$group.x[i],
+      y = contrast_df$group.y[i],
+      p_cutoff = p_cutoff,
+      FC_cutoff = FC_cutoff
+    )
   }
 
   # 使用lapply遍历对比矩阵
   diff_res_list <- lapply(seq_len(nrow(contrast_df)), get_res)
-  names(diff_res_list) <- paste(contrast_df$group.x, contrast_df$group.y, sep = '_vs_')
+  names(diff_res_list) <- paste(contrast_df$group.x, contrast_df$group.y, sep = "_vs_")
 
   object@diffres <- diff_res_list
   return(object)
@@ -399,45 +411,40 @@ processContrasts <-  function(object = NULL,
 
 
 
-run_RNASeq_pipeline <-  function(object = NULL,
-                                 version = "V3"
-                                 ) {
-
+run_RNASeq_pipeline <- function(object = NULL,
+                                version = "V3") {
   .validRNASeqOBJ(object)
 
 
   # 在此方法中，使用lapply来迭代contrast_df中的行并处理每个对照
 
-  run_RNASeq_pipeline <- function(root_dir,version = version,
-                                  diff_res){
-    prefix = paste(as.character(diff_res$Group)[1],
-                   as.character(diff_res$Group)[2],sep = '_vs_') # eg: C24M_vs_C12Mix
-    out_dir = file.path(root_dir,prefix,'/')
+  run_RNASeq_pipeline <- function(root_dir, version = version,
+                                  diff_res) {
+    prefix <- paste(as.character(diff_res$Group)[1],
+      as.character(diff_res$Group)[2],
+      sep = "_vs_"
+    ) # eg: C24M_vs_C12Mix
+    out_dir <- file.path(root_dir, prefix, "/")
     if (dir.exists(out_dir) == FALSE) {
       dir.create(out_dir)
     }
     tryCatch(
       expr = {
-        DEtoXlSX(Diff_res =diff_res ,Dir = out_dir)
-        GSEAtoXlSX(Diff_res =diff_res,Dir = out_dir,version =version)
-        GOtoXlSX(Diff_res =diff_res,Dir = out_dir,version =version)
-        Plot_DE_GOTerms(Diff_res =diff_res,DIR =out_dir,version =version)
-        PlotKEGG(Diff_res =diff_res,Dir = out_dir,save_Plot = T)
-        Plot_volcano(Diff_res =diff_res,Dir = out_dir,save_Plot = T)
-        Plot_enhancedVolcano(Diff_res =diff_res,Dir = out_dir,save_Plot = T)
-        Plot_heatmap(Diff_res =diff_res,dds=dds,Dir = out_dir,save_Plot = T)
-      },error = function(e){
+        DEtoXlSX(Diff_res = diff_res, Dir = out_dir)
+        GSEAtoXlSX(Diff_res = diff_res, Dir = out_dir, version = version)
+        GOtoXlSX(Diff_res = diff_res, Dir = out_dir, version = version)
+        Plot_DE_GOTerms(Diff_res = diff_res, DIR = out_dir, version = version)
+        PlotKEGG(Diff_res = diff_res, Dir = out_dir, save_Plot = T)
+        Plot_volcano(Diff_res = diff_res, Dir = out_dir, save_Plot = T)
+        Plot_enhancedVolcano(Diff_res = diff_res, Dir = out_dir, save_Plot = T)
+        Plot_heatmap(Diff_res = diff_res, dds = dds, Dir = out_dir, save_Plot = T)
+      }, error = function(e) {
         # 当发生异常时，打印错误信息并返回 NULL
         cat("Error in run_RNASeq_pipeline for", prefix, ":", e$message, "\n")
         return(NULL)
-      },finally = print(paste0("Finish analysis:",prefix,"  Files were save to ",out_dir))
+      }, finally = print(paste0("Finish analysis:", prefix, "  Files were save to ", out_dir))
     )
   }
-  lapply(object@diffres, run_RNASeq_pipeline,root_dir = object@outDir)
-  invisible(object)  # 修改为 invisible，通常情况下不需要打印整个对象
+  lapply(object@diffres, run_RNASeq_pipeline, root_dir = object@outDir)
+  invisible(object) # 修改为 invisible，通常情况下不需要打印整个对象
 }
-
-
-
-
-

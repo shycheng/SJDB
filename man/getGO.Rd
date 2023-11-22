@@ -7,7 +7,7 @@
 getGO(genes, universeIDs, qCutoff = 0.05, version = "V3")
 }
 \arguments{
-\item{version}{default: V3 , V3 -- "org.Sjaponicum.eg.db" V4 -- "org.SjaponicumV4.eg.db"}
+\item{version}{default: V3 , V3 :"org.Sjaponicum.eg.db" V4 : "org.SjaponicumV4.eg.db"}
 }
 \description{
 Title
