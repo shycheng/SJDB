@@ -100,7 +100,7 @@ If you want to save plots,just set
 `save_Plot = T, file_Dir = 'your_path/'`
 
 ``` r
-plot_PCA(dds,save_Plot = T,file_Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/')
+plot_PCA(dds,save_Plot = F,file_Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/')
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="60%" />

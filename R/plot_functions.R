@@ -305,6 +305,7 @@ Barplot_ID <- function(dds,ID){
 #'
 #' @param df
 #' @param n
+#' @param wt
 #'
 #' @return
 #' @export
@@ -330,6 +331,7 @@ get_TopLabel <- function(df,n=5){
 #' @param save_Plot
 #' @param p_cutoff
 #' @param FC_cutoff
+#' @param wt
 #'
 #' @return
 #' @export
@@ -343,13 +345,13 @@ Plot_enhancedVolcano <- function(Diff_res,n=5,Dir='./',save_Plot=FALSE
   prefix=paste(Diff_res$Group[1],Diff_res$Group[2],sep = "_VS_")
   filename = paste(Dir,prefix,"_enhanced_volcano.pdf")
   en_Volcano_Plot <- EnhancedVolcano::EnhancedVolcano(DF,
-                  lab = rownames(DF),
-                  selectLab = selectLab,
-                  x = 'log2FoldChange',
-                  y = 'padj',
-                  title = prefix,drawConnectors = T,
-                  pCutoff = p_cutoff,
-                  FCcutoff = FC_cutoff)
+                                                      lab = rownames(DF),
+                                                      selectLab = selectLab,
+                                                      x = 'log2FoldChange',
+                                                      y = 'padj',
+                                                      title = prefix,drawConnectors = T,
+                                                      pCutoff = p_cutoff,
+                                                      FCcutoff = FC_cutoff)
   if(save_Plot==TRUE){
     ggplot2::ggsave(filename = filename,plot = en_Volcano_Plot,width = 12,height = 10)
   }
