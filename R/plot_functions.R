@@ -1,31 +1,31 @@
-#' Title plot PCA
+#' #' Title plot PCA
+#' #'
+#' #' @return
+#' #' @export
+#' #'
+#' #' @examples
+#' plot_PCA <- function(dds, save_Plot = FALSE, file_Dir = "./", file_Name = "All_Samples_PCA_removeBatch.pdf") {
+#'   rld <- DESeq2::rlog(dds, blind = FALSE)
+#'   data <- DESeq2::plotPCA(rld, returnData = TRUE, intgroup = "Condition")
+#'   percentVar <- round(100 * attr(data, "percentVar"))
+#'   pca <- ggpubr::ggscatter(data, "PC1", "PC2",
+#'     color = "Condition",
+#'     label = "name", size = 5, repel = T,
+#'     palette = "jama", # 杂志jama的配色
+#'     ellipse = TRUE, # 画椭圆
+#'     mean.point = F,
+#'     star.plot = F # 生成星图
+#'   ) +
+#'     xlab(paste0("PC1: ", percentVar[1], "% variance")) +
+#'     ylab(paste0("PC2: ", percentVar[2], "% variance")) +
+#'     theme_bw(base_size = 18, base_line_size = 1) +
+#'     ggtitle("Principal Component Analysis")
 #'
-#' @return
-#' @export
-#'
-#' @examples
-plot_PCA <- function(dds, save_Plot = FALSE, file_Dir = "./", file_Name = "All_Samples_PCA_removeBatch.pdf") {
-  rld <- DESeq2::rlog(dds, blind = FALSE)
-  data <- DESeq2::plotPCA(rld, returnData = TRUE, intgroup = "Condition")
-  percentVar <- round(100 * attr(data, "percentVar"))
-  pca <- ggpubr::ggscatter(data, "PC1", "PC2",
-    color = "Condition",
-    label = "name", size = 5, repel = T,
-    palette = "jama", # 杂志jama的配色
-    ellipse = TRUE, # 画椭圆
-    mean.point = F,
-    star.plot = F # 生成星图
-  ) +
-    xlab(paste0("PC1: ", percentVar[1], "% variance")) +
-    ylab(paste0("PC2: ", percentVar[2], "% variance")) +
-    theme_bw(base_size = 18, base_line_size = 1) +
-    ggtitle("Principal Component Analysis")
-
-  if (save_Plot) {
-    ggplot2::ggsave(paste0(file_Dir, file_Name), width = 8, height = 6, plot = pca)
-  }
-  pca
-}
+#'   if (save_Plot) {
+#'     ggplot2::ggsave(paste0(file_Dir, file_Name), width = 8, height = 6, plot = pca)
+#'   }
+#'   pca
+#' }
 
 
 
