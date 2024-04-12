@@ -201,7 +201,7 @@ fill_TPM <- function(object = NULL,
 #' @export
 #'
 #' @examples
-plot_PCA <- function(object = NULL,
+plot_PCA_FactoMinR <- function(object = NULL,
                      assay = "tpm",
                      show = TRUE) {
   .validRNASeqOBJ(object)
@@ -238,58 +238,58 @@ plot_PCA <- function(object = NULL,
   }
 }
 
-#' Title plot correlation coefficient heatmap of samples
+
+
+#' Title
 #'
 #' @param object
 #' @param assay
 #' @param method
 #' @param cluster_rows
 #' @param cluster_cols
+#' @param width
+#' @param height
 #' @param show
 #'
 #' @return
 #' @export
 #'
 #' @examples
-plot_corHeatmap <- function(object = NULL,
-                            assay = "tpm",
-                            method = "pearson",
-                            cluster_rows = FALSE,
-                            cluster_cols = FALSE,
-                            show = TRUE) {
-  .validRNASeqOBJ(object)
-
+plot_corHeatmap <- function (object = NULL,
+                             assay = "tpm",
+                             method = "pearson",
+                             cluster_rows = FALSE,
+                             cluster_cols = FALSE,
+                             width = 8,
+                             height = 8,
+                             show = TRUE)
+{
   if (assay == "counts") {
     mat <- object@assay@counts
-  } else if (assay == "tpm") {
+  }
+  else if (assay == "tpm") {
     mat <- object@assay@tpm
-  } else if (assay == "deseq2") {
+  }
+  else if (assay == "deseq2") {
     mat <- object@assay@deseq2
-  } else {
+  }
+  else {
     stop("'Please choose a assay to plot_corHeatmap'")
   }
-  cor_matrix <- cor(mat,
-    method = method
-  )
-  cor_heatmap <- pheatmap::pheatmap(cor_matrix,
-    show_rownames = T, show_colnames = T,
-    cluster_cols = cluster_cols,
-    cluster_rows = cluster_rows,
-    main = sprintf("Samples' %s correlation coefficient", method),
-    fontsize = 15, display_numbers = F, fontsize_number = 12
-  )
-
-  ggsave(
-    filename = file.path(object@outDir, "Summary", sprintf("%s_%s_corHeatmap.pdf", assay, method)),
-    plot = cor_heatmap,
-    width = 16,
-    height = 16
-  )
-
+  cor_matrix <- cor(mat, method = method)
+  cor_heatmap <- pheatmap::pheatmap(cor_matrix, show_rownames = T,
+                                    show_colnames = T, cluster_cols = cluster_cols, cluster_rows = cluster_rows,
+                                    main = sprintf("Samples' %s correlation coefficient",
+                                                   method), fontsize = 15, display_numbers = F, fontsize_number = 12)
+  ggsave(filename = file.path(object@outDir, "Summary", sprintf("%s_%s_corHeatmap.pdf",
+                                                                assay, method)), plot = cor_heatmap, width = width,
+         height = height)
   if (show) {
     cor_heatmap
   }
 }
+
+
 
 
 #' Title
@@ -411,6 +411,15 @@ processContrasts <- function(object = NULL,
 
 
 
+#' Title
+#'
+#' @param object
+#' @param version
+#'
+#' @return
+#' @export
+#'
+#' @examples
 run_RNASeq_pipeline <- function(object = NULL,
                                 version = "V3") {
   .validRNASeqOBJ(object)
@@ -448,3 +457,176 @@ run_RNASeq_pipeline <- function(object = NULL,
   lapply(object@diffres, run_RNASeq_pipeline, root_dir = object@outDir)
   invisible(object) # 修改为 invisible，通常情况下不需要打印整个对象
 }
+
+
+### get terms list for heatmap annotation
+#' Title
+#'
+#' @param geneCls
+#' @param topN
+#' @param fun
+#' @param ont
+#' @param OrgDb
+#' @param keyType
+#' @param text_limits
+#'
+#' @return
+#' @export
+#'
+#' @examples
+get_termList <- function(geneCls,
+                         topN = 10,
+                         fun = "enrichGO",
+                         ont = "BP",
+                         OrgDb = "org.SjaponicumV4.eg.db",
+                         keyType = "GENEID",
+                         text_limits = c(8, 12)
+){
+  goCls <- clusterProfiler::compareCluster(geneCls,fun = fun,ont = ont,
+                                           OrgDb = OrgDb,keyType = keyType)
+
+  goCls_simple <- clusterProfiler::simplify(goCls,  cutoff = 0.7,
+                                            by = "p.adjust",
+                                            select_fun = min,
+                                            measure = "Wang")
+
+
+  go_df <- goCls_simple@compareClusterResult %>%
+    as.data.frame() %>%
+    group_by(Cluster) %>%
+    top_n(wt = `p.adjust`,n = -topN)
+  go_df$col <- anno_col[as.character(go_df$Cluster)]
+
+  go_df.tmp <- go_df %>%
+    group_by(Cluster) %>%
+    mutate(size = scales::rescale(-log10(pvalue), to = text_limits)) %>%
+    ungroup() %>%
+    dplyr::select(c("Description","col","size"))
+
+  colnames(go_df.tmp) <- c("text","col","fontsize")
+
+  term.list <- split(as.data.frame(go_df.tmp),go_df$Cluster)
+  term.list
+}
+
+
+#' Title
+#'
+#' @param RNASeqOBJ
+#' @param Diff_res
+#' @param topN
+#' @param anno_cols
+#' @param annoblock
+#' @param annoGO
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plot_complexHeatmap <- function(RNASeqOBJ,
+                                Diff_res,
+                                topN = 5,
+                                anno_cols = c("Up-regulated" = "#c77cff", "Down-regulated" = "#FF9900"),
+                                annoblock= TRUE,annoGO = TRUE){
+
+
+
+  Diff_res <- RNASeqOBJ@diffres[[Diff_res]]
+
+  upExpression <- RNASeqOBJ@assay@tpm[Diff_res$up_gene$SYMBOL, ]
+  downExpression <- RNASeqOBJ@assay@tpm[Diff_res$down_gene$SYMBOL, ]
+
+  upExpression <- upExpression[order(rowMeans(upExpression), decreasing = TRUE),]
+  downExpression <- downExpression[order(rowMeans(downExpression), decreasing = TRUE),]
+
+  subexpression <- rbind(upExpression, downExpression)
+
+  subgroup <- c(rep("Up-regulated",nrow(upExpression)),rep("Down-regulated",nrow(downExpression)))
+  #生成分组颜色条注释；top annotation
+
+  mat <- as.matrix(as.data.frame(t(scale(t(subexpression)))))
+  class = anno_block(gp = gpar(fill = c("#c77cff","#FF9900"),
+                               col="white"),height = unit(5, "mm"),
+                     labels = Diff_res$Group,
+
+                     labels_gp = gpar(col = "white", fontsize = 8,fontface="bold"))
+
+
+  group= ComplexHeatmap::HeatmapAnnotation(group=class)
+
+  # 添加gene 名称标记; left annotation
+
+  mark <- c(head(Diff_res$up_gene$SYMBOL,topN),head(Diff_res$down_gene$SYMBOL,topN))
+  mark_col <- ifelse(mark %in% Diff_res$up_gene$SYMBOL, "#c77cff","#FF9900")
+  lab = ComplexHeatmap::rowAnnotation(ano = ComplexHeatmap::anno_mark(at = match(mark,rownames(mat)),
+                                      labels = id2name[mark,"Gene_Name"],
+                                      which = 'row',side = 'left',
+                                      labels_gp = grid::gpar(fontface = "italic",
+                                                             fontsize = 12,
+                                                             col = mark_col
+                                      )
+  ))
+
+  # 添加上下调Gene anno_block
+
+  align_to = split(1:nrow(mat), subgroup)
+
+  if ( annoblock== TRUE) {
+    anno.block <- ComplexHeatmap::anno_block(align_to = align_to,
+                                             panel_fun = function(index,subgroup) {
+                                               grid::grid.rect(gp = grid::gpar(fill = anno_cols[subgroup],col = NA))
+                                               # text
+                                               grid::grid.text(label = paste("N:",length(index),sep = ''),
+                                                               rot = 90,
+                                                               gp = grid::gpar(col = "white",
+                                                                               fontsize = 12
+                                                               ))},which = "row")
+  }else{
+    anno.block <- NULL
+  }
+
+
+  if (annoGO == TRUE) {
+
+    geneCls <- split(rownames(mat),
+                     subgroup)
+
+    term.list <- get_termList(geneCls)
+
+    textbox = ComplexHeatmap::anno_textbox(align_to,
+                                           term.list,
+                                           word_wrap = T,
+                                           add_new_line = T,
+                                           side = "right",
+                                           background_gp = grid::gpar(fill = "grey95",
+                                                                      col = "grey50"),
+                                           by = "anno_link")
+  }else{
+    textbox = NULL
+  }
+
+  if (is.null(anno.block) & is.null(textbox)) {
+    right_annotation = NULL
+  }else{
+    right_annotation = rowAnnotation(cluster = anno.block,
+                                     textbox = textbox)
+  }
+
+  ht <- Heatmap(mat,
+                cluster_rows = FALSE,
+                cluster_columns = TRUE,
+                column_split = 2,
+                column_title = NULL,
+                show_row_names = FALSE,
+                name = "Z-score(TPM)",
+                top_annotation = group,
+                left_annotation = lab,
+                right_annotation = right_annotation,
+                row_split = subgroup
+
+  )
+  return(list(ht = ht,mat = mat))
+}
+
+
+

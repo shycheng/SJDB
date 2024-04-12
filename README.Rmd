@@ -13,21 +13,20 @@ knitr::opts_chunk$set(
 )
 ```
 
-
 # SJDB
 
 <!-- badges: start -->
-
 <!-- badges: end -->
 
-SJDB is a R package of run RNA-seq DEGs analysis for Schistosoma japonicum
+The goal of SJDB is to ...
 
 ## Installation
 
-You can install the development version of SJDB like so:
+You can install the development version of SJDB from [GitHub](https://github.com/) with:
 
 ``` r
-install.packages('SJDB/',repos = NULL)
+# install.packages("devtools")
+devtools::install_github("shycheng/SJDB")
 ```
 
 ## Example
@@ -36,99 +35,21 @@ This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
 library(SJDB)
-# If you want to do GO and KEGG pathway analysis for Schistosoma joponicum,you must install org.Sjaponicum.eg.db firstly,like this:
-
-# install.packages(paste0(system.file("extdata",package = "SJDB"),"/org.Sjaponicum.eg.db"),repos = NULL)
-
-library(org.Sjaponicum.eg.db)
 ## basic example code
 ```
 
-```{r load-packages, include=FALSE}
-library(writexl)
-library(DESeq2)
-library(clusterProfiler)
-library(ggplot2)
-library(FactoMineR)
-library(factoextra)
-library(patchwork)
-library(ggpubr)
-library(EnhancedVolcano)
+What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+
+```{r cars}
+summary(cars)
 ```
 
-### Step1.run different expression analysis and get a dds object
+You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/v1/examples>.
 
-```{r echo=TRUE}
-dds <- run_DESeq2(count_data = "~/Projects/RNASeq_YC_20220810/2.Results/SnakePipe_outputs/featureCounts/counts.tsv", groupList = c("GFP.F", "One2.F"))
+You can also embed plots, for example:
 
-# ,save_Plot = T,file_Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/',p_cutoff = 0.05,FC_cutoff = 1
+```{r pressure, echo = FALSE}
+plot(pressure)
 ```
 
-### Step2.PCA and Sample Correlation Analysis(pearson)
-
-If you want to save plots,just set `save_Plot = T, file_Dir = 'your_path/'`
-
-```{r echo=TRUE}
-plot_PCA(dds, save_Plot = T, file_Dir = "~/Projects/RNASeq_YC_20220810/2.Results/test/")
-```
-
-```{r echo=TRUE}
-Plot_corr_heatmap(dds, savePlot = T, fileDir = "~/Projects/RNASeq_YC_20220810/2.Results/test/", type = "pearson")
-```
-
-### Step3.Get the DEGs(different expression genes) you want
-
-```{r echo=TRUE}
-diffres <- get_mRNA_diff(dds, x = "GFP_F", y = "One2_F", p_cutoff = 0.05, FC_cutoff = 1)
-```
-
-### Step4.Heatmap and volcano plot
-
-```{r echo=TRUE,warning=FALSE}
-Plot_volcano(Diff_res = diffres, Dir = "~/Projects/RNASeq_YC_20220810/2.Results/test/", save_Plot = T)
-```
-
-optional
-
-```{r echo=TRUE,warning=FALSE,fig.height=8,fig.width=6}
-Plot_enhancedVolcano(Diff_res = diffres, n = 5, save_Plot = T, p_cutoff = 0.05, FC_cutoff = 1, Dir = "~/Projects/RNASeq_YC_20220810/2.Results/test/")
-```
-
-```{r echo=TRUE,warning=FALSE,fig.width=3.5,fig.height=6}
-Plot_heatmap(
-  Diff_res = diffres, dds = dds, Dir = "~/Projects/RNASeq_YC_20220810/2.Results/test/",
-  save_Plot = T, show_rownames = F
-)
-```
-
-```{r echo=TRUE,warning=FALSE}
-Barplot_ID(dds = dds, ID = "Sjc_0003510")
-```
-
-### Step5.GO / KEGG pathway enrichment analysis ps: optional,not required
-
-```{r echo=TRUE}
-GOres <- getGO(diffres$down_gene$SYMBOL)
-clusterProfiler::cnetplot(GOres$GOList$MF) # BP,CC,MF
-```
-
-```{r echo=TRUE}
-KEGGres <- getKEGG(diffres$down_gene$SYMBOL)
-clusterProfiler::dotplot(KEGGres)
-```
-
-```{r echo=TRUE}
-Plot_DE_GOTerms(Diff_res = diffres, DIR = "~/Projects/RNASeq_YC_20220810/2.Results/test/", p_cutoff = 0.05)
-```
-
-### Step6.Write results to excel files
-
-```{r echo=TRUE}
-ExptoXlSX(dds = dds, Dir = "~/Projects/RNASeq_YC_20220810/2.Results/test/")
-DEtoXlSX(Diff_res = diffres, Dir = "~/Projects/RNASeq_YC_20220810/2.Results/test/")
-GOtoXlSX(Diff_res = diffres, Dir = "~/Projects/RNASeq_YC_20220810/2.Results/test/")
-# GSEA analysis need long time,don't run in the example
-# GSEAtoXlSX(Diff_res = diffres,Dir = '~/Projects/RNASeq_YC_20220810/2.Results/test/',pvalueCutoff = 0.5)
-
-list.files("~/Projects/RNASeq_YC_20220810/2.Results/test/", pattern = "*xlsx")
-```
+In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.

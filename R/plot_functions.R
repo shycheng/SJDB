@@ -1,58 +1,108 @@
-#' #' Title plot PCA
-#' #'
-#' #' @return
-#' #' @export
-#' #'
-#' #' @examples
-#' plot_PCA <- function(dds, save_Plot = FALSE, file_Dir = "./", file_Name = "All_Samples_PCA_removeBatch.pdf") {
-#'   rld <- DESeq2::rlog(dds, blind = FALSE)
-#'   data <- DESeq2::plotPCA(rld, returnData = TRUE, intgroup = "Condition")
-#'   percentVar <- round(100 * attr(data, "percentVar"))
-#'   pca <- ggpubr::ggscatter(data, "PC1", "PC2",
-#'     color = "Condition",
-#'     label = "name", size = 5, repel = T,
-#'     palette = "jama", # 杂志jama的配色
-#'     ellipse = TRUE, # 画椭圆
-#'     mean.point = F,
-#'     star.plot = F # 生成星图
-#'   ) +
-#'     xlab(paste0("PC1: ", percentVar[1], "% variance")) +
-#'     ylab(paste0("PC2: ", percentVar[2], "% variance")) +
-#'     theme_bw(base_size = 18, base_line_size = 1) +
-#'     ggtitle("Principal Component Analysis")
+#' Title
 #'
-#'   if (save_Plot) {
-#'     ggplot2::ggsave(paste0(file_Dir, file_Name), width = 8, height = 6, plot = pca)
-#'   }
-#'   pca
-#' }
+#' @param object
+#' @param assay
+#' @param show
+#' @param width
+#' @param height
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plot_PCA <- function (object = NULL, assay = "tpm", show = TRUE,
+                      width = 6,
+                      height = 4.5
+)
+{
+  if (assay == "counts") {
+    mat <- object@assay@counts
+  }
+  else if (assay == "tpm") {
+    mat <- object@assay@tpm
+  }
+  else if (assay == "deseq2") {
+    mat <- object@assay@deseq2
+  }
+  else {
+    stop("'Please choose a assay to PCA'")
+  }
+  pca <- FactoMineR::PCA(t(mat), scale.unit = TRUE, ncp = 5)
+  pca_df <- data.frame(pca$ind$coord)
+  pca_df$condition <- object@pheno$Condition
+  pca_df$Treat <- object@pheno$Treat
+  pca_df$name <- rownames(pca_df)
+  pca_plot <- ggpubr::ggscatter(pca_df, "Dim.1", "Dim.2", color = "condition",
+                                size = 5, label = "name", repel = T) + xlab(paste0("PC1: ",
+                                                                                   round(pca$eig[, 2][1], digits = 2), "% variance")) +
+    ylab(paste0("PC2: ", round(pca$eig[, 2][2], digits = 2),
+                "% variance")) + theme_bw(base_size = 18, base_line_size = 1) +
+    ggtitle("PCA") +
+
+    stat_ellipse(aes(fill=condition), type="norm", geom="polygon", alpha=0.372, color=NA)
+
+
+  ggplot2::ggsave(filename = file.path(object@outDir, "Summary",
+                                       sprintf("%s_pca.pdf", assay)), plot = pca_plot, width = width,
+                  height = height)
+  if (show) {
+    pca_plot
+  }
+}
 
 
 
-# .plot_PCA <- function(dds,save_Plot = FALSE,file_Dir = './',file_Name = 'All_Samples_PCA_removeBatch.pdf'){
-#   rld <- DESeq2::rlog(dds, blind = FALSE)
-#   pheno <- SummarizedExperiment::colData(dds)
-#   data_pca <- as.data.frame(t(as.data.frame(SummarizedExperiment::assay(rld))[,pheno$Sample]))
-#   res.pca <- FactoMineR::PCA(data_pca, graph = FALSE)
-#   pca <- factoextra::fviz_pca_ind(res.pca,
-#                       geom = c("point", "text"),
-#                       geom.ind = c("point", "text"), # show points only (nbut not "text")
-#                       col.ind = as.character(pheno$Condition), # color by groups
-#                       fill.ind = pheno$Condition,
-#                       palette = "jco",
-#                       mean.point = FALSE,pointsize = 3,
-#                       pointshape = 20,
-#                       repel = T,
-#                       ellipse.type = "confidence",
-#                       addEllipses = T, # Concentration ellipses
-#                       legend.title = "Groups",
-#                       ggtheme = theme_bw(),
-#                       title = "Principal Component Analysis")
-#   if (save_Plot){
-#     ggplot2::ggsave(paste0(file_Dir,file_Name),width = 8,height = 6,plot = pca)
-#   }
-#   pca
-# }
+
+
+#' Title
+#'
+#' @param object
+#' @param assay
+#' @param method
+#' @param cluster_rows
+#' @param cluster_cols
+#' @param width
+#' @param height
+#' @param show
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plot_corHeatmap <- function (object = NULL,
+                             assay = "tpm",
+                             method = "pearson",
+                             cluster_rows = FALSE,
+                             cluster_cols = FALSE,
+                             width = 8,
+                             height = 8,
+                             show = TRUE)
+{
+  if (assay == "counts") {
+    mat <- object@assay@counts
+  }
+  else if (assay == "tpm") {
+    mat <- object@assay@tpm
+  }
+  else if (assay == "deseq2") {
+    mat <- object@assay@deseq2
+  }
+  else {
+    stop("'Please choose a assay to plot_corHeatmap'")
+  }
+  cor_matrix <- cor(mat, method = method)
+  cor_heatmap <- pheatmap::pheatmap(cor_matrix, show_rownames = T,
+                                    show_colnames = T, cluster_cols = cluster_cols, cluster_rows = cluster_rows,
+                                    main = sprintf("Samples' %s correlation coefficient",
+                                                   method), fontsize = 15, display_numbers = F, fontsize_number = 12)
+  ggsave(filename = file.path(object@outDir, "Summary", sprintf("%s_%s_corHeatmap.pdf",
+                                                                assay, method)), plot = cor_heatmap, width = width,
+         height = height)
+  if (show) {
+    cor_heatmap
+  }
+}
+
 
 
 #' Title
@@ -65,7 +115,7 @@
 #' @export
 #'
 #' @examples
-Plot_corr_heatmap <- function(dds, fileDir = "./", type = "pearson", savePlot = FALSE) {
+Plot_corHeatmap_dds <- function(dds, fileDir = "./", type = "pearson", savePlot = FALSE) {
   rld <- DESeq2::rlog(dds, blind = FALSE)
   cor_matrix <- stats::cor(SummarizedExperiment::assay(rld), method = type)
   cor_heatmap <- pheatmap::pheatmap(cor_matrix,
@@ -79,6 +129,10 @@ Plot_corr_heatmap <- function(dds, fileDir = "./", type = "pearson", savePlot = 
     return(cor_heatmap)
   }
 }
+
+
+
+
 
 #' Title
 #'
