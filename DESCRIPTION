@@ -1,6 +1,6 @@
 Package: SJDB
 Title: What the Package Does (One Line, Title Case)
-Version: 1.1.0.9000
+Version: 1.1.0.9001
 Authors@R: 
     person("ShaoYun", "Cheng", , "shawyunchan@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
