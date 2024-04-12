@@ -4,10 +4,10 @@
 \alias{GSEAtoXlSX}
 \title{Title}
 \usage{
-GSEAtoXlSX(Diff_res, Dir = "./", pvalueCutoff = 0.5)
+GSEAtoXlSX(Diff_res, Dir = "./", pvalueCutoff = 0.5, version = "V3")
 }
 \arguments{
-\item{pvalueCutoff}{}
+\item{version}{}
 }
 \description{
 Title

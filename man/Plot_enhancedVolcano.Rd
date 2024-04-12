@@ -14,7 +14,7 @@ Plot_enhancedVolcano(
 )
 }
 \arguments{
-\item{FC_cutoff}{}
+\item{wt}{}
 }
 \description{
 Title

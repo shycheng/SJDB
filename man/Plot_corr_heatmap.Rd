@@ -2,7 +2,28 @@
 % Please edit documentation in R/plot_functions.R
 \name{Plot_corr_heatmap}
 \alias{Plot_corr_heatmap}
-\title{Title}
+\title{#' Title plot PCA
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plot_PCA <- function(dds, save_Plot = FALSE, file_Dir = "./", file_Name = "All_Samples_PCA_removeBatch.pdf") {
+rld <- DESeq2::rlog(dds, blind = FALSE)
+data <- DESeq2::plotPCA(rld, returnData = TRUE, intgroup = "Condition")
+percentVar <- round(100 * attr(data, "percentVar"))
+pca <- ggpubr::ggscatter(data, "PC1", "PC2",
+color = "Condition",
+label = "name", size = 5, repel = T,
+palette = "jama", # 杂志jama的配色
+ellipse = TRUE, # 画椭圆
+mean.point = F,
+star.plot = F # 生成星图
+) +
+xlab(paste0("PC1: ", percentVar\link{1}, "\% variance")) +
+ylab(paste0("PC2: ", percentVar\link{2}, "\% variance")) +
+theme_bw(base_size = 18, base_line_size = 1) +
+ggtitle("Principal Component Analysis")}
 \usage{
 Plot_corr_heatmap(dds, fileDir = "./", type = "pearson", savePlot = FALSE)
 }
@@ -10,5 +31,5 @@ Plot_corr_heatmap(dds, fileDir = "./", type = "pearson", savePlot = FALSE)
 \item{type}{}
 }
 \description{
-Title
+
 }

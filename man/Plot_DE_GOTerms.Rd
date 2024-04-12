@@ -4,10 +4,10 @@
 \alias{Plot_DE_GOTerms}
 \title{Title}
 \usage{
-Plot_DE_GOTerms(Diff_res, DIR = "./", p_cutoff = 0.05)
+Plot_DE_GOTerms(Diff_res, DIR = "./", p_cutoff = 0.05, version)
 }
 \arguments{
-\item{p_cutoff}{}
+\item{version}{}
 }
 \description{
 Title

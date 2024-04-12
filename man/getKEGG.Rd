@@ -4,10 +4,10 @@
 \alias{getKEGG}
 \title{Title}
 \usage{
-getKEGG(geneid, universeIDs)
+getKEGG(geneid, universeIDs, version = "V3")
 }
 \arguments{
-\item{universeIDs}{}
+\item{version}{}
 }
 \description{
 Title

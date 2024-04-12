@@ -7,7 +7,7 @@
 get_TopLabel(df, n = 5)
 }
 \arguments{
-\item{n}{}
+\item{wt}{}
 }
 \description{
 Title

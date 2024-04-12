@@ -4,10 +4,10 @@
 \alias{GOtoXlSX}
 \title{Title}
 \usage{
-GOtoXlSX(Diff_res, Dir = "./")
+GOtoXlSX(Diff_res, Dir = "./", version = "V3")
 }
 \arguments{
-\item{Dir}{}
+\item{version}{}
 }
 \description{
 Title
